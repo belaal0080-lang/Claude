@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLASSIFIED — HEART_MODULE v2.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --accent: #00f7ff;
+    --accent2: #0050ff;
+    --bg: #000814;
+    --glow: 0 0 8px var(--accent), 0 0 20px var(--accent);
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    overflow: hidden;
+    user-select: none;
+    cursor: default;
+  }
+
+  /* ── SCANLINE OVERLAY ── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 3px,
+      rgba(0,0,0,0.15) 3px,
+      rgba(0,0,0,0.15) 4px
+    );
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* ── BOOT SCREEN ── */
+  #boot {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    z-index: 100;
+    transition: opacity 0.8s ease;
+  }
+
+  #boot.hide { opacity: 0; pointer-events: none; }
+
+  .hud-box {
+    position: relative;
+    width: min(580px, 94vw);
+    padding: 2.5rem 2rem;
+    border: 1px solid var(--accent);
+    box-shadow: var(--glow), inset 0 0 30px rgba(0,247,255,0.04);
+    background: rgba(0,8,20,0.95);
+  }
+
+  .hud-box::before, .hud-box::after,
+  .hud-box .corner-br, .hud-box .corner-tl-inner {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+  }
+  .hud-box::before  { top: -2px;    left: -2px;    border-top: 3px solid var(--accent);  border-left: 3px solid var(--accent); }
+  .hud-box::after   { top: -2px;    right: -2px;   border-top: 3px solid var(--accent);  border-right: 3px solid var(--accent); }
+  .hud-box .corner-br { bottom: -2px; right: -2px; border-bottom: 3px solid var(--accent); border-right: 3px solid var(--accent); }
+  .hud-box .corner-bl { content: ''; position: absolute; width: 18px; height: 18px; bottom: -2px; left: -2px; border-bottom: 3px solid var(--accent); border-left: 3px solid var(--accent); }
+
+  .hud-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(0.65rem, 2.5vw, 0.85rem);
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    text-shadow: var(--glow);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  #boot-log {
+    font-size: clamp(0.7rem, 2vw, 0.82rem);
+    line-height: 1.9;
+    color: var(--accent);
+    min-height: 10em;
+  }
+
+  #boot-log .line { display: block; }
+  #boot-log .cursor { display: inline-block; width: 0.6em; height: 1em; background: var(--accent); vertical-align: text-bottom; animation: blink 0.8s step-end infinite; }
+
+  #enter-btn {
+    display: none;
+    margin: 2rem auto 0;
+    padding: 0.75rem 2.5rem;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    color: var(--bg);
+    background: var(--accent);
+    border: none;
+    cursor: pointer;
+    box-shadow: var(--glow);
+    animation: pulse-glow 1.5s ease-in-out infinite, blink-btn 1.2s step-end infinite;
+    transition: transform 0.1s;
+  }
+  #enter-btn:hover { transform: scale(1.05); }
+
+  /* ── SLIDES ── */
+  #slides {
+    position: fixed;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+  }
+  #slides.show { opacity: 1; pointer-events: all; }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+    pointer-events: none;
+  }
+  .slide.active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: all;
+  }
+
+  /* slide backgrounds */
+  .slide-1 { background: radial-gradient(ellipse at center, #001a2e 0%, #000814 100%); }
+  .slide-2 { background: radial-gradient(ellipse at center, #001a2e 0%, #000814 100%); }
+  .slide-3 { background: radial-gradient(ellipse at center, #0d001f 0%, #000814 100%); }
+  .slide-4 { background: radial-gradient(ellipse at center, #0d001f 0%, #000814 100%); }
+  .slide-5 { background: radial-gradient(ellipse at center, #1a000e 0%, #000814 100%); }
+  .slide-6 { background: radial-gradient(ellipse at center, #1a000e 0%, #000814 100%); }
+  .slide-7 { background: radial-gradient(ellipse at center, #1a0010 0%, #0a0005 100%); }
+
+  .slide-content {
+    position: relative;
+    width: min(600px, 92vw);
+    padding: 2.5rem 2rem;
+    text-align: center;
+  }
+
+  .slide-num {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    opacity: 0.5;
+    margin-bottom: 0.5rem;
+  }
+
+  .slide-tag {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    opacity: 0.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .slide-msg {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.1rem, 4vw, 1.7rem);
+    line-height: 1.4;
+    color: var(--accent);
+    text-shadow: var(--glow);
+    margin-bottom: 2rem;
+  }
+
+  .slide-sub {
+    font-size: clamp(0.7rem, 2vw, 0.8rem);
+    color: var(--accent);
+    opacity: 0.55;
+    letter-spacing: 0.1em;
+    line-height: 1.6;
+  }
+
+  /* tap hint */
+  .tap-hint {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    opacity: 0.45;
+    animation: blink 1.5s step-end infinite;
+    font-family: 'Space Mono', monospace;
+    z-index: 50;
+  }
+  .tap-hint.hide { display: none; }
+
+  /* back button */
+  #back-btn {
+    position: fixed;
+    top: 1.2rem;
+    left: 1.2rem;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    opacity: 0.5;
+    cursor: pointer;
+    z-index: 200;
+    display: none;
+    background: none;
+    border: none;
+    padding: 0.4rem 0.6rem;
+  }
+  #back-btn:hover { opacity: 1; }
+
+  /* slide counter */
+  #counter {
+    position: fixed;
+    top: 1.2rem;
+    right: 1.2rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    opacity: 0.45;
+    font-family: 'Space Mono', monospace;
+    display: none;
+    z-index: 200;
+  }
+
+  /* ── SLIDE-SPECIFIC VISUALS ── */
+
+  /* Glitch effect (slide 1) */
+  .glitch-wrap { position: relative; display: inline-block; }
+  .glitch-wrap::before, .glitch-wrap::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: inherit;
+    line-height: 1.4;
+    color: var(--accent);
+    overflow: hidden;
+  }
+  .glitch-wrap::before {
+    left: 2px;
+    text-shadow: -2px 0 #ff00c8;
+    animation: glitch-1 3.5s infinite linear;
+    clip-path: polygon(0 30%, 100% 30%, 100% 50%, 0 50%);
+  }
+  .glitch-wrap::after {
+    left: -2px;
+    text-shadow: 2px 0 #00f7ff;
+    animation: glitch-2 3.5s infinite linear;
+    clip-path: polygon(0 60%, 100% 60%, 100% 75%, 0 75%);
+  }
+
+  /* Waveform (slide 2) */
+  #wave-canvas { display: block; margin: 0 auto 1.5rem; opacity: 0.7; }
+
+  /* Stars (slide 3) */
+  #stars-canvas {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .slide-3 .slide-content { z-index: 1; }
+
+  /* Progress bar (slide 4) */
+  .prog-wrap {
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto 1rem;
+    border: 1px solid var(--accent);
+    padding: 3px;
+    box-shadow: var(--glow);
+  }
+  .prog-bar {
+    height: 12px;
+    width: 0%;
+    background: var(--accent);
+    box-shadow: var(--glow);
+    transition: width 2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .prog-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    opacity: 0.7;
+    margin-bottom: 0.4rem;
+    text-align: left;
+  }
+
+  /* Oscilloscope (slide 5) */
+  #osc-canvas { display: block; margin: 0 auto 1.5rem; opacity: 0.75; }
+
+  /* Equation (slide 6) */
+  .equation {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(0.9rem, 3vw, 1.2rem);
+    color: var(--accent);
+    text-shadow: var(--glow);
+    letter-spacing: 0.1em;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeInUp 1s ease forwards 0.5s;
+  }
+
+  /* Final hearts (slide 7) */
+  .heart-particle {
+    position: fixed;
+    font-size: 1.5rem;
+    pointer-events: none;
+    animation: floatHeart var(--dur) ease-in forwards;
+    z-index: 10;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes blink { 50% { opacity: 0; } }
+  @keyframes blink-btn { 50% { opacity: 0.7; } }
+
+  @keyframes pulse-glow {
+    0%, 100% { text-shadow: 0 0 6px var(--accent), 0 0 15px var(--accent); }
+    50%       { text-shadow: 0 0 12px var(--accent), 0 0 30px var(--accent), 0 0 50px var(--accent); }
+  }
+
+  @keyframes glitch-1 {
+    0%,95%,100% { clip-path: polygon(0 30%,100% 30%,100% 50%,0 50%); transform: none; }
+    96% { clip-path: polygon(0 10%,100% 10%,100% 28%,0 28%); transform: translate(-3px,0); }
+    98% { clip-path: polygon(0 55%,100% 55%,100% 70%,0 70%); transform: translate(3px,0); }
+  }
+  @keyframes glitch-2 {
+    0%,95%,100% { clip-path: polygon(0 60%,100% 60%,100% 75%,0 75%); transform: none; }
+    96% { clip-path: polygon(0 75%,100% 75%,100% 88%,0 88%); transform: translate(3px,0); }
+    98% { clip-path: polygon(0 20%,100% 20%,100% 38%,0 38%); transform: translate(-3px,0); }
+  }
+
+  @keyframes floatHeart {
+    0%   { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-80vh) scale(0.5) rotate(var(--rot)); }
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes scanMove {
+    0%   { top: -4px; }
+    100% { top: 100%; }
+  }
+
+  /* HUD scan line on boot */
+  .scan-line {
+    position: absolute;
+    left: 0; right: 0; top: -4px;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--accent), transparent);
+    opacity: 0.6;
+    animation: scanMove 2.5s linear infinite;
+    pointer-events: none;
+  }
+
+  /* ── SLIDE COLOR THEMES ── */
+  .slide-1, .slide-2 { --accent: #00f7ff; --accent2: #0050ff; }
+  .slide-3, .slide-4 { --accent: #bf7fff; --accent2: #7b00ff; }
+  .slide-5, .slide-6 { --accent: #ff4da6; --accent2: #cc0055; }
+  .slide-7           { --accent: #ff4466; --accent2: #ffcc00; }
+</style>
+</head>
+<body>
+
+<!-- ── BOOT SCREEN ── -->
+<div id="boot">
+  <div class="hud-box">
+    <div class="scan-line"></div>
+    <div class="corner-br"></div>
+    <div class="corner-bl"></div>
+    <div class="hud-title">◈ HEART_MODULE v2.0 — INITIALIZING ◈</div>
+    <div id="boot-log"><span class="cursor"></span></div>
+    <button id="enter-btn" onclick="enterSlides()">▶ ENTER CLASSIFIED DATA</button>
+  </div>
+</div>
+
+<!-- ── SLIDES ── -->
+<div id="slides">
+
+  <!-- Slide 1 — Glitch -->
+  <div class="slide slide-1" id="slide-1">
+    <div class="slide-content">
+      <div class="slide-num">01 / 07</div>
+      <div class="slide-tag">> ANOMALY_DETECTED</div>
+      <div class="slide-msg">
+        <span class="glitch-wrap" data-text="You are my favorite glitch in the universe.">
+          You are my favorite glitch in the universe.
+        </span>
+      </div>
+      <div class="slide-sub">
+        ERROR CODE: TOO_PERFECT_TO_FIX<br>
+        STATUS: Will not patch. Ever.
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 2 — Waveform -->
+  <div class="slide slide-2" id="slide-2">
+    <div class="slide-content">
+      <div class="slide-num">02 / 07</div>
+      <div class="slide-tag">> SIGNAL_ANALYSIS</div>
+      <canvas id="wave-canvas" width="340" height="70"></canvas>
+      <div class="slide-msg">My heart beats<br>at your frequency.</div>
+      <div class="slide-sub">
+        FREQUENCY: ∞ Hz &nbsp;|&nbsp; AMPLITUDE: MAXIMUM<br>
+        No interference detected.
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3 — Stars -->
+  <div class="slide slide-3" id="slide-3">
+    <canvas id="stars-canvas"></canvas>
+    <div class="slide-content">
+      <div class="slide-num">03 / 07</div>
+      <div class="slide-tag">> GALACTIC_COORDINATE_LOCK</div>
+      <div class="slide-msg">In a galaxy full of stars,<br>you are my only coordinate.</div>
+      <div class="slide-sub">
+        COORDINATES: [∞, ∞, ∞]<br>
+        TARGET: LOCKED &nbsp;♡
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 4 — Progress bar -->
+  <div class="slide slide-4" id="slide-4">
+    <div class="slide-content">
+      <div class="slide-num">04 / 07</div>
+      <div class="slide-tag">> UPGRADE_COMPLETE</div>
+      <div class="prog-label">LIFE_QUALITY.exe — installing you...</div>
+      <div class="prog-wrap"><div class="prog-bar" id="prog-bar"></div></div>
+      <div class="slide-msg" style="margin-top:1.5rem;">Every moment with you<br>is an upgrade to my existence.</div>
+      <div class="slide-sub">VERSION: Better. Always.</div>
+    </div>
+  </div>
+
+  <!-- Slide 5 — Oscilloscope -->
+  <div class="slide slide-5" id="slide-5">
+    <div class="slide-content">
+      <div class="slide-num">05 / 07</div>
+      <div class="slide-tag">> NOISE_FILTER_ACTIVE</div>
+      <canvas id="osc-canvas" width="340" height="80"></canvas>
+      <div class="slide-msg">You are the signal<br>in all my noise.</div>
+      <div class="slide-sub">SNR: ∞ dB &nbsp;|&nbsp; CLARITY: ABSOLUTE</div>
+    </div>
+  </div>
+
+  <!-- Slide 6 — Equation -->
+  <div class="slide slide-6" id="slide-6">
+    <div class="slide-content">
+      <div class="slide-num">06 / 07</div>
+      <div class="slide-tag">> UNIVERSAL_CONSTANTS</div>
+      <div class="equation" id="eq-text">∀x ∈ Universe: x ≠ You</div>
+      <div class="slide-msg">My universe has<br>only one constant: You.</div>
+      <div class="slide-sub">PROOF: Self-evident. QED ♡</div>
+    </div>
+  </div>
+
+  <!-- Slide 7 — Final -->
+  <div class="slide slide-7" id="slide-7">
+    <div class="slide-content">
+      <div class="slide-num">07 / 07</div>
+      <div class="slide-tag">> TRANSMISSION_COMPLETE</div>
+      <div class="slide-msg" style="font-size:clamp(2rem,8vw,3.5rem); font-weight:900;">
+        I LOVE YOU
+      </div>
+      <div style="font-size:2.5rem; margin-bottom:1rem; animation: pulse-glow 1s ease-in-out infinite;">♥</div>
+      <div class="slide-sub">
+        This message will never self-destruct.<br>
+        You are my favorite human in the known universe.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Navigation -->
+<button id="back-btn" onclick="prevSlide()">◀ BACK</button>
+<div id="counter"></div>
+<div class="tap-hint" id="tap-hint">[ TAP ANYWHERE TO CONTINUE ]</div>
+
+<script>
+// ── BOOT SEQUENCE ──
+const bootLines = [
+  '> INITIALIZING HEART_MODULE v2.0...',
+  '> ESTABLISHING SECURE CHANNEL...',
+  '> SCANNING UNIVERSE FOR TARGET...',
+  '  ██░░░░░░░░  22%',
+  '  ████░░░░░░  44%',
+  '  ██████░░░░  66%',
+  '  ████████░░  88%',
+  '  ██████████ 100%  MATCH CONFIRMED',
+  '> IDENTITY VERIFIED: [YOU]',
+  '> LOADING CLASSIFIED ROMANTIC DATA...',
+  '> DECRYPTING... DONE.',
+  '> ACCESS GRANTED. WELCOME. ♥',
+];
+
+const logEl = document.getElementById('boot-log');
+const enterBtn = document.getElementById('enter-btn');
+let bootDone = false;
+
+function typeLines(lines, lineIdx = 0, charIdx = 0) {
+  if (lineIdx >= lines.length) {
+    // Done
+    logEl.innerHTML = logEl.innerHTML.replace('<span class="cursor"></span>', '');
+    enterBtn.style.display = 'block';
+    bootDone = true;
+    return;
+  }
+  const line = lines[lineIdx];
+  if (charIdx === 0) {
+    // Start new line
+    const span = document.createElement('span');
+    span.className = 'line';
+    logEl.appendChild(span);
+    // Move cursor after span
+    const cursor = logEl.querySelector('.cursor');
+    if (cursor) logEl.appendChild(cursor);
+  }
+  const spans = logEl.querySelectorAll('.line');
+  const currentSpan = spans[spans.length - 1];
+  currentSpan.textContent = line.slice(0, charIdx + 1);
+
+  const delay = line.startsWith('  █') ? 40 : 28;
+  if (charIdx < line.length - 1) {
+    setTimeout(() => typeLines(lines, lineIdx, charIdx + 1), delay);
+  } else {
+    // Small pause between lines
+    const pause = line.includes('100%') ? 500 : 120;
+    setTimeout(() => typeLines(lines, lineIdx + 1, 0), pause);
+  }
+}
+
+// Start boot after tiny delay
+setTimeout(() => typeLines(bootLines), 600);
+
+// ── SLIDE ENGINE ──
+let currentSlide = 0;
+const totalSlides = 7;
+const slidesEl = document.getElementById('slides');
+const bootEl = document.getElementById('boot');
+const backBtn = document.getElementById('back-btn');
+const counterEl = document.getElementById('counter');
+const tapHint = document.getElementById('tap-hint');
+
+function enterSlides() {
+  bootEl.classList.add('hide');
+  setTimeout(() => {
+    bootEl.style.display = 'none';
+    slidesEl.classList.add('show');
+    backBtn.style.display = 'block';
+    counterEl.style.display = 'block';
+    showSlide(0);
+  }, 800);
+}
+
+function showSlide(n) {
+  // Hide all
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  currentSlide = n;
+  const slide = document.getElementById('slide-' + (n + 1));
+  slide.classList.add('active');
+
+  // Update counter
+  counterEl.textContent = (n + 1) + ' / ' + totalSlides;
+
+  // Back button visibility
+  backBtn.style.opacity = n === 0 ? '0.15' : '0.5';
+
+  // Tap hint
+  tapHint.classList.toggle('hide', n === totalSlides - 1);
+
+  // Slide-specific triggers
+  if (n === 1) startWave();
+  if (n === 2) startStars();
+  if (n === 3) startProgress();
+  if (n === 4) startOsc();
+  if (n === 5) startEquation();
+  if (n === 6) startHearts();
+}
+
+function nextSlide() {
+  if (currentSlide < totalSlides - 1) showSlide(currentSlide + 1);
+}
+function prevSlide() {
+  if (currentSlide > 0) showSlide(currentSlide - 1);
+}
+
+// Click anywhere to advance (not on back button)
+document.getElementById('slides').addEventListener('click', (e) => {
+  if (e.target.id !== 'back-btn') nextSlide();
+});
+
+// ── WAVEFORM (slide 2) ──
+let waveAnim;
+function startWave() {
+  cancelAnimationFrame(waveAnim);
+  const canvas = document.getElementById('wave-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = Math.min(340, window.innerWidth - 80);
+  let t = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = '#00f7ff';
+    ctx.shadowColor = '#00f7ff';
+    ctx.shadowBlur = 8;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let x = 0; x < canvas.width; x++) {
+      const progress = x / canvas.width;
+      const y = canvas.height / 2
+        + Math.sin(progress * Math.PI * 6 + t) * 18
+        + Math.sin(progress * Math.PI * 2 + t * 0.7) * 8;
+      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    t += 0.055;
+    waveAnim = requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// ── STARS (slide 3) ──
+let starsAnim;
+function startStars() {
+  cancelAnimationFrame(starsAnim);
+  const canvas = document.getElementById('stars-canvas');
+  const slide = document.getElementById('slide-3');
+  canvas.width = slide.offsetWidth;
+  canvas.height = slide.offsetHeight;
+  const ctx = canvas.getContext('2d');
+
+  const stars = Array.from({length: 120}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 1.5 + 0.3,
+    speed: Math.random() * 0.3 + 0.05,
+    phase: Math.random() * Math.PI * 2,
+  }));
+
+  // One special bright star
+  const special = { x: canvas.width / 2, y: canvas.height * 0.3, r: 3, pulse: 0 };
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    stars.forEach(s => {
+      s.phase += s.speed * 0.02;
+      const alpha = 0.3 + Math.sin(s.phase) * 0.3;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(191,127,255,${alpha})`;
+      ctx.fill();
+    });
+    // Special pulsing star
+    special.pulse += 0.04;
+    const glow = 4 + Math.sin(special.pulse) * 3;
+    ctx.shadowColor = '#bf7fff';
+    ctx.shadowBlur = glow * 4;
+    ctx.beginPath();
+    ctx.arc(special.x, special.y, special.r + Math.sin(special.pulse), 0, Math.PI * 2);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    starsAnim = requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// ── PROGRESS BAR (slide 4) ──
+function startProgress() {
+  const bar = document.getElementById('prog-bar');
+  bar.style.width = '0%';
+  setTimeout(() => { bar.style.width = '100%'; }, 300);
+}
+
+// ── OSCILLOSCOPE (slide 5) ──
+let oscAnim;
+function startOsc() {
+  cancelAnimationFrame(oscAnim);
+  const canvas = document.getElementById('osc-canvas');
+  canvas.width = Math.min(340, window.innerWidth - 80);
+  const ctx = canvas.getContext('2d');
+  let t = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Grid lines
+    ctx.strokeStyle = 'rgba(255,77,166,0.15)';
+    ctx.lineWidth = 1;
+    for (let i = 1; i < 4; i++) {
+      const y = (canvas.height / 4) * i;
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+    }
+    // Signal
+    ctx.strokeStyle = '#ff4da6';
+    ctx.shadowColor = '#ff4da6';
+    ctx.shadowBlur = 10;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let x = 0; x < canvas.width; x++) {
+      const p = x / canvas.width;
+      const y = canvas.height / 2
+        + Math.sin(p * Math.PI * 8 + t) * 25
+        + Math.sin(p * Math.PI * 3 + t * 0.5) * 8;
+      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    t += 0.06;
+    oscAnim = requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// ── EQUATION FADE (slide 6) ──
+function startEquation() {
+  const eq = document.getElementById('eq-text');
+  eq.style.animation = 'none';
+  void eq.offsetWidth; // reflow
+  eq.style.animation = 'fadeInUp 1s ease forwards 0.5s';
+  eq.style.opacity = '0';
+}
+
+// ── FLOATING HEARTS (slide 7) ──
+let heartsInterval;
+function startHearts() {
+  clearInterval(heartsInterval);
+  // Initial burst
+  for (let i = 0; i < 25; i++) spawnHeart(Math.random() * 3000);
+  // Continuous trickle
+  heartsInterval = setInterval(() => spawnHeart(0), 600);
+}
+
+function spawnHeart(delay) {
+  setTimeout(() => {
+    if (currentSlide !== 6) return;
+    const h = document.createElement('div');
+    h.className = 'heart-particle';
+    const emojis = ['♥', '❤', '💗', '💕', '♡'];
+    h.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    const dur = (3 + Math.random() * 4).toFixed(1) + 's';
+    const rot = (Math.random() * 60 - 30).toFixed(0) + 'deg';
+    h.style.cssText = `
+      left: ${(Math.random() * 90 + 5).toFixed(1)}%;
+      bottom: -2rem;
+      font-size: ${(1 + Math.random() * 1.5).toFixed(1)}rem;
+      --dur: ${dur};
+      --rot: ${rot};
+      color: hsl(${(340 + Math.random() * 40).toFixed(0)}, 90%, 65%);
+    `;
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), parseFloat(dur) * 1000 + 200);
+  }, delay);
+}
+</script>
+</body>
+</html>
