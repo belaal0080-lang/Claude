@@ -195,21 +195,29 @@
     line-height: 1.6;
   }
 
-  /* tap hint */
-  .tap-hint {
+  /* next button */
+  #next-btn {
     position: fixed;
     bottom: 2rem;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 0.65rem;
-    letter-spacing: 0.25em;
-    color: var(--accent);
-    opacity: 0.45;
-    animation: blink 1.5s step-end infinite;
-    font-family: 'Space Mono', monospace;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    color: var(--bg);
+    background: var(--accent);
+    border: none;
+    cursor: pointer;
+    padding: 0.75rem 2rem;
+    box-shadow: var(--glow);
     z-index: 50;
+    animation: pulse-glow 1.5s ease-in-out infinite;
+    white-space: nowrap;
   }
-  .tap-hint.hide { display: none; }
+  #next-btn.hide { display: none; }
+
+  /* tap hint */
+  .tap-hint { display: none; }
 
   /* back button */
   #back-btn {
@@ -503,7 +511,8 @@
 <!-- Navigation -->
 <button id="back-btn" onclick="prevSlide()">◀ BACK</button>
 <div id="counter"></div>
-<div class="tap-hint" id="tap-hint">[ TAP ANYWHERE TO CONTINUE ]</div>
+<button id="next-btn" onclick="nextSlide()">NEXT ▶</button>
+<div class="tap-hint" id="tap-hint"></div>
 
 <script>
 // ── BOOT SEQUENCE ──
@@ -569,6 +578,7 @@ const bootEl = document.getElementById('boot');
 const backBtn = document.getElementById('back-btn');
 const counterEl = document.getElementById('counter');
 const tapHint = document.getElementById('tap-hint');
+const nextBtn = document.getElementById('next-btn');
 
 function enterSlides() {
   bootEl.classList.add('hide');
@@ -594,8 +604,13 @@ function showSlide(n) {
   // Back button visibility
   backBtn.style.opacity = n === 0 ? '0.15' : '0.5';
 
-  // Tap hint
-  tapHint.classList.toggle('hide', n === totalSlides - 1);
+  // Next button label / visibility
+  if (n === totalSlides - 1) {
+    nextBtn.classList.add('hide');
+  } else {
+    nextBtn.classList.remove('hide');
+    nextBtn.textContent = n === totalSlides - 2 ? 'REVEAL ♥' : 'NEXT ▶';
+  }
 
   // Slide-specific triggers
   if (n === 1) startWave();
