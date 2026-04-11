@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Regal Media — PR Agency</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & BASE ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:       #0b1e3d;
+  --navy-dark:  #070f1f;
+  --navy-mid:   #132848;
+  --navy-light: #1e3a5f;
+  --gold:       #c9a84c;
+  --gold-light: #e2c97e;
+  --gold-dim:   #9a7a30;
+  --white:      #ffffff;
+  --off-white:  #f7f4ef;
+  --text:       #2c2c2c;
+  --text-light: #6b7280;
+  --border:     rgba(201,168,76,0.2);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  background: var(--white);
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
+
+img { display: block; max-width: 100%; }
+
+a { text-decoration: none; color: inherit; }
+
+/* ── UTILITIES ── */
+.container {
+  width: 90%;
+  max-width: 1160px;
+  margin: 0 auto;
+}
+
+.gold-line {
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: var(--gold);
+  margin: 1rem 0 1.5rem;
+}
+
+.gold-line.center { margin: 1rem auto 1.5rem; }
+
+.section-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ── NAVBAR ── */
+#navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 1.2rem 0;
+  transition: background 0.4s ease, padding 0.4s ease, box-shadow 0.4s ease;
+}
+
+#navbar.scrolled {
+  background: var(--navy-dark);
+  padding: 0.8rem 0;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.4);
+}
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.05em;
+}
+
+.nav-logo span { color: var(--gold); }
+
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.8);
+  transition: color 0.2s;
+  position: relative;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -4px;
+  width: 0; height: 2px;
+  background: var(--gold);
+  transition: width 0.3s ease;
+}
+
+.nav-links a:hover { color: var(--gold); }
+.nav-links a:hover::after { width: 100%; }
+
+.nav-cta {
+  padding: 0.55rem 1.4rem;
+  border: 1px solid var(--gold);
+  color: var(--gold) !important;
+  font-size: 0.78rem !important;
+  letter-spacing: 0.15em !important;
+  transition: background 0.2s, color 0.2s !important;
+}
+.nav-cta:hover { background: var(--gold) !important; color: var(--navy-dark) !important; }
+.nav-cta::after { display: none !important; }
+
+/* Hamburger */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px;
+}
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--white);
+  transition: all 0.3s;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Mobile nav */
+.nav-mobile {
+  display: none;
+  flex-direction: column;
+  background: var(--navy-dark);
+  padding: 1.5rem 0;
+  gap: 0;
+}
+.nav-mobile.open { display: flex; }
+.nav-mobile a {
+  color: rgba(255,255,255,0.85);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.9rem 5%;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  transition: color 0.2s, background 0.2s;
+}
+.nav-mobile a:hover { color: var(--gold); background: rgba(201,168,76,0.05); }
+
+/* ── HERO ── */
+#home {
+  min-height: 100vh;
+  background: var(--navy-dark);
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Diagonal gold accent */
+#home::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 42%;
+  height: 100%;
+  background: linear-gradient(135deg, transparent 40%, rgba(201,168,76,0.06) 100%);
+  pointer-events: none;
+}
+
+/* Grid pattern overlay */
+#home::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  padding: 8rem 0 5rem;
+}
+
+.hero-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+}
+
+.hero-title {
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.1;
+  max-width: 720px;
+  margin-bottom: 0.5rem;
+}
+
+.hero-title em {
+  font-style: normal;
+  color: var(--gold);
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: rgba(255,255,255,0.55);
+  font-weight: 300;
+  max-width: 520px;
+  line-height: 1.7;
+  margin-top: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.hero-btns {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  display: inline-block;
+  padding: 0.85rem 2.2rem;
+  background: var(--gold);
+  color: var(--navy-dark);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition: background 0.25s, transform 0.2s;
+}
+.btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+
+.btn-outline {
+  display: inline-block;
+  padding: 0.85rem 2.2rem;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.85);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition: border-color 0.25s, color 0.25s, transform 0.2s;
+}
+.btn-outline:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  transform: translateY(-2px);
+}
+
+/* Stats bar */
+.hero-stats {
+  display: flex;
+  gap: 3rem;
+  margin-top: 4rem;
+  padding-top: 3rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  flex-wrap: wrap;
+}
+
+.stat-item { }
+.stat-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+}
+.stat-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-top: 0.35rem;
+}
+
+/* ── SERVICES ── */
+#services {
+  padding: 6rem 0;
+  background: var(--off-white);
+}
+
+.section-head {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.section-title {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.2;
+}
+
+.section-desc {
+  font-size: 1rem;
+  color: var(--text-light);
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.service-card {
+  background: var(--white);
+  padding: 2.5rem 2rem;
+  border-bottom: 3px solid transparent;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  cursor: default;
+}
+
+.service-card:hover {
+  border-color: var(--gold);
+  box-shadow: 0 8px 40px rgba(11,30,61,0.1);
+  transform: translateY(-4px);
+}
+
+.service-icon {
+  width: 52px;
+  height: 52px;
+  background: rgba(201,168,76,0.1);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.4rem;
+}
+
+.service-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 0.75rem;
+}
+
+.service-desc {
+  font-size: 0.88rem;
+  color: var(--text-light);
+  line-height: 1.7;
+}
+
+/* ── ABOUT STRIP ── */
+#about {
+  padding: 6rem 0;
+  background: var(--navy);
+}
+
+.about-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: center;
+}
+
+.about-label { color: var(--gold); }
+
+.about-title {
+  font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.25;
+  margin-bottom: 1.5rem;
+}
+
+.about-text {
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+
+.about-text + .about-text { margin-top: 1rem; }
+
+.about-cta {
+  margin-top: 2rem;
+  display: inline-block;
+  padding: 0.8rem 2rem;
+  background: var(--gold);
+  color: var(--navy-dark);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition: background 0.25s;
+}
+.about-cta:hover { background: var(--gold-light); }
+
+.about-right {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.about-stat-box {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(201,168,76,0.15);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  transition: background 0.3s;
+}
+.about-stat-box:hover { background: rgba(201,168,76,0.06); }
+
+.about-stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+}
+.about-stat-lbl {
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-top: 0.5rem;
+  line-height: 1.4;
+}
+
+/* ── TEAM ── */
+#team {
+  padding: 6rem 0;
+  background: var(--white);
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+}
+
+.team-card {
+  text-align: center;
+}
+
+.team-avatar {
+  width: 100%;
+  aspect-ratio: 1;
+  background: var(--navy-mid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.3s;
+}
+
+.team-avatar::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.team-card:hover .team-avatar { background: var(--navy-light); }
+.team-card:hover .team-avatar::after { transform: scaleX(1); }
+
+.team-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 0.3rem;
+}
+
+.team-role {
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 0.75rem;
+}
+
+.team-bio {
+  font-size: 0.84rem;
+  color: var(--text-light);
+  line-height: 1.6;
+}
+
+/* ── CONTACT ── */
+#contact {
+  padding: 6rem 0;
+  background: var(--off-white);
+}
+
+.contact-inner {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 5rem;
+  align-items: start;
+}
+
+.contact-info-title {
+  font-size: clamp(1.8rem, 3vw, 2.3rem);
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.25;
+  margin-bottom: 1rem;
+}
+
+.contact-desc {
+  font-size: 0.92rem;
+  color: var(--text-light);
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+}
+
+.contact-detail {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.contact-icon {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  background: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: var(--gold);
+}
+
+.contact-detail-text strong {
+  display: block;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 0.2rem;
+}
+
+.contact-detail-text span {
+  font-size: 0.88rem;
+  color: var(--text-light);
+}
+
+/* Form */
+.contact-form {
+  background: var(--white);
+  padding: 3rem 2.5rem;
+  box-shadow: 0 4px 40px rgba(11,30,61,0.06);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #ddd;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  color: var(--text);
+  background: var(--white);
+  outline: none;
+  transition: border-color 0.2s;
+  resize: vertical;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--gold);
+}
+
+.form-group textarea { min-height: 130px; }
+
+.form-submit {
+  width: 100%;
+  padding: 1rem;
+  background: var(--navy);
+  color: var(--white);
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.25s;
+}
+.form-submit:hover { background: var(--gold); color: var(--navy-dark); }
+
+.form-success {
+  display: none;
+  text-align: center;
+  padding: 2rem;
+  color: var(--navy);
+  font-size: 1rem;
+}
+.form-success .tick { font-size: 2.5rem; color: var(--gold); margin-bottom: 0.5rem; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--navy-dark);
+  padding: 3.5rem 0 2rem;
+}
+
+.footer-inner {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 3rem;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  margin-bottom: 2rem;
+}
+
+.footer-brand-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 1rem;
+}
+.footer-brand-name span { color: var(--gold); }
+
+.footer-tagline {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.4);
+  line-height: 1.7;
+  max-width: 260px;
+}
+
+.footer-col-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.2rem;
+}
+
+.footer-links { list-style: none; }
+.footer-links li { margin-bottom: 0.65rem; }
+.footer-links a {
+  font-size: 0.84rem;
+  color: rgba(255,255,255,0.45);
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--gold); }
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer-copy {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.3);
+}
+
+.footer-socials {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.social-btn {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255,255,255,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.4);
+  font-size: 0.8rem;
+  transition: border-color 0.2s, color 0.2s;
+}
+.social-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1024px) {
+  .services-grid { grid-template-columns: repeat(2, 1fr); }
+  .team-grid { grid-template-columns: repeat(2, 1fr); }
+  .footer-inner { grid-template-columns: 1fr 1fr; gap: 2rem; }
+}
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+
+  .hero-stats { gap: 2rem; }
+
+  .about-inner { grid-template-columns: 1fr; gap: 3rem; }
+  .about-right { grid-template-columns: repeat(2, 1fr); }
+
+  .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
+  .form-row { grid-template-columns: 1fr; }
+
+  .footer-inner { grid-template-columns: 1fr 1fr; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+}
+
+@media (max-width: 560px) {
+  .services-grid { grid-template-columns: 1fr; }
+  .team-grid { grid-template-columns: 1fr 1fr; }
+  .contact-form { padding: 2rem 1.5rem; }
+  .footer-inner { grid-template-columns: 1fr; }
+  .hero-btns { flex-direction: column; }
+  .btn-primary, .btn-outline { text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#home" class="nav-logo">Regal<span>.</span>Media</a>
+      <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#team">Our Team</a></li>
+        <li><a href="#contact" class="nav-cta">Contact Us</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="#home" onclick="closeMobile()">Home</a>
+    <a href="#services" onclick="closeMobile()">Services</a>
+    <a href="#about" onclick="closeMobile()">About</a>
+    <a href="#team" onclick="closeMobile()">Our Team</a>
+    <a href="#contact" onclick="closeMobile()">Contact Us</a>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section id="home">
+  <div class="container">
+    <div class="hero-inner">
+      <p class="hero-label reveal">Premier Public Relations Agency</p>
+      <h1 class="hero-title reveal reveal-delay-1">
+        Shaping <em>Narratives.</em><br>Building Legacies.
+      </h1>
+      <p class="hero-subtitle reveal reveal-delay-2">
+        Regal Media crafts powerful stories for brands, executives, and organizations that demand excellence. Your reputation is our priority.
+      </p>
+      <div class="hero-btns reveal reveal-delay-3">
+        <a href="#services" class="btn-primary">Our Services</a>
+        <a href="#contact" class="btn-outline">Get In Touch</a>
+      </div>
+      <div class="hero-stats reveal reveal-delay-4">
+        <div class="stat-item">
+          <div class="stat-number">12+</div>
+          <div class="stat-label">Years of Excellence</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">300+</div>
+          <div class="stat-label">Clients Served</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">98%</div>
+          <div class="stat-label">Client Retention</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">40+</div>
+          <div class="stat-label">Industry Awards</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SERVICES ── -->
+<section id="services">
+  <div class="container">
+    <div class="section-head">
+      <span class="section-label reveal">What We Do</span>
+      <span class="gold-line center reveal"></span>
+      <h2 class="section-title reveal">Comprehensive PR Solutions</h2>
+      <p class="section-desc reveal" style="margin-top:1rem;">
+        From media relations to brand strategy, we deliver tailored communications that elevate your presence and protect your reputation.
+      </p>
+    </div>
+    <div class="services-grid">
+
+      <div class="service-card reveal">
+        <div class="service-icon">📡</div>
+        <h3 class="service-name">Media Relations</h3>
+        <p class="service-desc">We build and nurture relationships with top-tier journalists, editors, and broadcasters to secure earned media coverage that resonates with your audience.</p>
+      </div>
+
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-icon">🎯</div>
+        <h3 class="service-name">Brand Strategy</h3>
+        <p class="service-desc">Our strategists define and articulate your brand's voice, positioning, and narrative to create a consistent and compelling identity across all channels.</p>
+      </div>
+
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-icon">🛡️</div>
+        <h3 class="service-name">Crisis Management</h3>
+        <p class="service-desc">When reputations are on the line, our crisis experts respond swiftly and decisively — protecting your brand and restoring stakeholder confidence.</p>
+      </div>
+
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-icon">🌐</div>
+        <h3 class="service-name">Digital PR</h3>
+        <p class="service-desc">We amplify your story across digital platforms, social media, and online publications — driving engagement, authority, and organic visibility.</p>
+      </div>
+
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-icon">🎪</div>
+        <h3 class="service-name">Event Management</h3>
+        <p class="service-desc">From press conferences to product launches and galas, we orchestrate events that create lasting impressions and generate powerful media coverage.</p>
+      </div>
+
+      <div class="service-card reveal reveal-delay-3">
+        <div class="service-icon">🏛️</div>
+        <h3 class="service-name">Corporate Communications</h3>
+        <p class="service-desc">We manage internal and external communications strategy, investor relations, and executive positioning for organizations of all sizes.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section id="about">
+  <div class="container">
+    <div class="about-inner">
+      <div class="about-left">
+        <span class="section-label about-label reveal">Who We Are</span>
+        <span class="gold-line reveal"></span>
+        <h2 class="about-title reveal">Trusted by Leaders.<br>Driven by Results.</h2>
+        <p class="about-text reveal">
+          Founded with a vision to redefine public relations, Regal Media has grown into one of the most respected PR agencies in the industry. We combine strategic insight with creative storytelling to deliver measurable outcomes for our clients.
+        </p>
+        <p class="about-text reveal">
+          Our team of seasoned communications professionals brings expertise across industries including finance, technology, healthcare, luxury, and entertainment — ensuring your message reaches the right audience at the right time.
+        </p>
+        <a href="#contact" class="about-cta reveal">Work With Us</a>
+      </div>
+      <div class="about-right reveal">
+        <div class="about-stat-box">
+          <div class="about-stat-num">12+</div>
+          <div class="about-stat-lbl">Years in Business</div>
+        </div>
+        <div class="about-stat-box">
+          <div class="about-stat-num">300+</div>
+          <div class="about-stat-lbl">Clients Worldwide</div>
+        </div>
+        <div class="about-stat-box">
+          <div class="about-stat-num">50+</div>
+          <div class="about-stat-lbl">Team Specialists</div>
+        </div>
+        <div class="about-stat-box">
+          <div class="about-stat-num">40+</div>
+          <div class="about-stat-lbl">Awards Won</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TEAM ── -->
+<section id="team">
+  <div class="container">
+    <div class="section-head">
+      <span class="section-label reveal">The People Behind the Work</span>
+      <span class="gold-line center reveal"></span>
+      <h2 class="section-title reveal">Meet Our Team</h2>
+      <p class="section-desc reveal" style="margin-top:1rem;">
+        Our diverse team of communications experts brings decades of combined experience, passion, and dedication to every client partnership.
+      </p>
+    </div>
+    <div class="team-grid">
+
+      <div class="team-card reveal">
+        <div class="team-avatar">SR</div>
+        <h3 class="team-name">Sarah Regal</h3>
+        <p class="team-role">Founder & CEO</p>
+        <p class="team-bio">With 20 years in PR, Sarah built Regal Media from the ground up. A visionary leader renowned for transforming brands at pivotal moments.</p>
+      </div>
+
+      <div class="team-card reveal reveal-delay-1">
+        <div class="team-avatar">JM</div>
+        <h3 class="team-name">James Mitchell</h3>
+        <p class="team-role">Head of Strategy</p>
+        <p class="team-bio">James leads our strategic communications practice, helping clients define their narrative and position themselves as industry authorities.</p>
+      </div>
+
+      <div class="team-card reveal reveal-delay-2">
+        <div class="team-avatar">PS</div>
+        <h3 class="team-name">Priya Sharma</h3>
+        <p class="team-role">Digital PR Director</p>
+        <p class="team-bio">Priya specializes in digital-first PR campaigns, influencer strategy, and social media — driving modern brand visibility at scale.</p>
+      </div>
+
+      <div class="team-card reveal reveal-delay-3">
+        <div class="team-avatar">DO</div>
+        <h3 class="team-name">Daniel Okafor</h3>
+        <p class="team-role">Media Relations Lead</p>
+        <p class="team-bio">Daniel's vast network of media contacts across print, broadcast, and digital ensures our clients receive consistent, high-quality coverage.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-inner">
+      <div class="contact-left">
+        <span class="section-label reveal">Reach Out</span>
+        <span class="gold-line reveal"></span>
+        <h2 class="contact-info-title reveal">Let's Start a Conversation</h2>
+        <p class="contact-desc reveal">
+          Ready to elevate your brand? Our team is here to discuss your communications goals and craft a strategy that delivers real results.
+        </p>
+
+        <div class="contact-detail reveal">
+          <div class="contact-icon">📍</div>
+          <div class="contact-detail-text">
+            <strong>Our Office</strong>
+            <span>14 Prestige Tower, Business Bay<br>Dubai, UAE</span>
+          </div>
+        </div>
+
+        <div class="contact-detail reveal">
+          <div class="contact-icon">📞</div>
+          <div class="contact-detail-text">
+            <strong>Phone</strong>
+            <span>+971 4 000 0000</span>
+          </div>
+        </div>
+
+        <div class="contact-detail reveal">
+          <div class="contact-icon">✉️</div>
+          <div class="contact-detail-text">
+            <strong>Email</strong>
+            <span>hello@regalmedia.com</span>
+          </div>
+        </div>
+
+        <div class="contact-detail reveal">
+          <div class="contact-icon">🕐</div>
+          <div class="contact-detail-text">
+            <strong>Business Hours</strong>
+            <span>Monday – Friday: 9:00 AM – 6:00 PM</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-form reveal" id="contact-form-wrap">
+        <div id="form-content">
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name</label>
+              <input type="text" placeholder="John">
+            </div>
+            <div class="form-group">
+              <label>Last Name</label>
+              <input type="text" placeholder="Smith">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" placeholder="john@company.com">
+          </div>
+          <div class="form-group">
+            <label>Company</label>
+            <input type="text" placeholder="Your Company Name">
+          </div>
+          <div class="form-group">
+            <label>Service Interested In</label>
+            <select>
+              <option value="" disabled selected>Select a service...</option>
+              <option>Media Relations</option>
+              <option>Brand Strategy</option>
+              <option>Crisis Management</option>
+              <option>Digital PR</option>
+              <option>Event Management</option>
+              <option>Corporate Communications</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Your Message</label>
+            <textarea placeholder="Tell us about your project or inquiry..."></textarea>
+          </div>
+          <button class="form-submit" onclick="submitForm()">Send Message</button>
+        </div>
+        <div class="form-success" id="form-success">
+          <div class="tick">✓</div>
+          <h3 style="font-size:1.3rem; color:var(--navy); margin-bottom:0.5rem;">Message Sent!</h3>
+          <p style="font-size:0.9rem; color:var(--text-light);">Thank you for reaching out. A member of our team will be in touch within 24 hours.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand-name">Regal<span>.</span>Media</div>
+        <p class="footer-tagline">Shaping narratives. Building legacies. Your reputation is our greatest commitment.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Navigate</div>
+        <ul class="footer-links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#team">Our Team</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Services</div>
+        <ul class="footer-links">
+          <li><a href="#services">Media Relations</a></li>
+          <li><a href="#services">Brand Strategy</a></li>
+          <li><a href="#services">Crisis Management</a></li>
+          <li><a href="#services">Digital PR</a></li>
+          <li><a href="#services">Event Management</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Contact</div>
+        <ul class="footer-links">
+          <li><a href="mailto:hello@regalmedia.com">hello@regalmedia.com</a></li>
+          <li><a href="tel:+97140000000">+971 4 000 0000</a></li>
+          <li><a href="#contact">Business Bay, Dubai</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 Regal Media. All rights reserved.</p>
+      <div class="footer-socials">
+        <a href="#" class="social-btn" title="LinkedIn">in</a>
+        <a href="#" class="social-btn" title="Twitter">𝕏</a>
+        <a href="#" class="social-btn" title="Instagram">ig</a>
+        <a href="#" class="social-btn" title="Facebook">fb</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── NAVBAR SCROLL ──
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// ── HAMBURGER ──
+const hamburger = document.getElementById('hamburger');
+const navMobile = document.getElementById('nav-mobile');
+
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  navMobile.classList.toggle('open');
+});
+
+function closeMobile() {
+  hamburger.classList.remove('open');
+  navMobile.classList.remove('open');
+}
+
+// ── SCROLL REVEAL ──
+const revealEls = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+revealEls.forEach(el => observer.observe(el));
+
+// ── ACTIVE NAV LINK ──
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 120) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.style.color = a.getAttribute('href') === '#' + current
+      ? 'var(--gold)' : '';
+  });
+});
+
+// ── CONTACT FORM ──
+function submitForm() {
+  const inputs = document.querySelectorAll('#form-content input, #form-content textarea, #form-content select');
+  let valid = true;
+  inputs.forEach(i => {
+    if (!i.value.trim()) { i.style.borderColor = '#e55'; valid = false; }
+    else i.style.borderColor = '';
+  });
+  if (!valid) return;
+  document.getElementById('form-content').style.display = 'none';
+  document.getElementById('form-success').style.display = 'block';
+}
+</script>
+</body>
+</html>
