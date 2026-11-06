@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ember Reel Brand Sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Serif:ital@0;1&family=Manrope:wght@500;600;700&family=Noto+Nastaliq+Urdu:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Palette: one hot accent on warm-dark neutrals, built to read over sky and drone footage */
+  --ink:#121110;        /* page + end-card base */
+  --ink-2:#1d1b19;      /* panels */
+  --line:#34302c;       /* hairlines */
+  --bone:#F4EEE3;       /* caption white (warm, never pure #fff) */
+  --sand:#B8AC9B;       /* secondary text, connector words */
+  --ember:#FF5B22;      /* the one accent: keyword bar, modifier word, numbers */
+  --ember-deep:#C8410F; /* ember on light backgrounds */
+  --font-display:"Archivo", "Arial Black", system-ui, sans-serif;  /* set at wdth 125, wght 850 */
+  --font-accent:"Instrument Serif", Georgia, serif;                 /* italic modifier */
+  --font-body:"Manrope", "Segoe UI", system-ui, sans-serif;
+  --font-urdu:"Noto Nastaliq Urdu", serif;
+  /* Layout idea: a studio spec sheet. Left-aligned reading column, 9:16 phone frames as the hero evidence. */
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--ink);color:var(--bone);font-family:var(--font-body);line-height:1.55}
+a{color:var(--ember)}
+.wrap{max-width:1120px;margin:0 auto;padding:40px 24px 80px}
+h1,h2,h3{font-family:var(--font-display);font-variation-settings:"wdth" 125;font-weight:850;line-height:1.02;text-wrap:balance;margin:0}
+h1{font-size:clamp(40px,7vw,84px);letter-spacing:-.01em}
+h2{font-size:clamp(24px,3.2vw,34px);margin-bottom:18px}
+h3{font-size:17px;font-variation-settings:"wdth" 110;font-weight:800;margin-bottom:8px}
+p{margin:0 0 12px;max-width:66ch}
+.lede{font-size:19px;color:var(--sand);max-width:60ch}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--sand);font-weight:700}
+section{padding:48px 0;border-top:1px solid var(--line)}
+header{padding-bottom:40px}
+.name-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:20px 0 8px}
+.name-row label{font-size:13px;color:var(--sand)}
+.name-row input{background:var(--ink-2);color:var(--bone);border:1px solid var(--line);border-radius:6px;padding:8px 12px;font:600 15px var(--font-body);width:220px}
+input:focus-visible,button:focus-visible{outline:2px solid var(--ember);outline-offset:2px}
+.mark{display:inline-flex;align-items:center;gap:10px}
+.mono{width:44px;height:44px;border-radius:10px;background:var(--ember);color:var(--ink);display:grid;place-items:center;font:850 22px var(--font-display);font-variation-settings:"wdth" 125}
+.grid{display:grid;gap:20px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.panel{background:var(--ink-2);border:1px solid var(--line);border-radius:12px;padding:20px}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--sand);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+td.num{white-space:nowrap}
+.table-scroll{overflow-x:auto}
+.keep{color:var(--bone)} .chg{color:var(--ember);font-weight:700}
+
+/* swatches */
+.sw{border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.sw .chip{height:96px;display:flex;align-items:flex-end;padding:10px;font:850 13px var(--font-display);font-variation-settings:"wdth" 125;letter-spacing:.04em}
+.sw .meta{padding:10px 12px;font-size:13px;background:var(--ink-2)}
+.sw .meta b{display:block;font-size:14px}
+.sw code{color:var(--sand)}
+
+/* type specimens */
+.spec{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:baseline;padding:18px 0;border-bottom:1px solid var(--line)}
+.spec .lab{font-size:12px;color:var(--sand);line-height:1.4}
+.t-key{font:850 56px/1 var(--font-display);font-variation-settings:"wdth" 125;text-transform:uppercase;letter-spacing:-.005em}
+.t-mod{font:italic 46px/1 var(--font-accent);color:var(--ember)}
+.t-con{font:600 26px/1.2 var(--font-body);color:var(--bone)}
+.t-urdu{font:600 30px/2 var(--font-urdu);direction:rtl}
+@media (max-width:560px){.spec{grid-template-columns:1fr}.t-key{font-size:40px}}
+
+/* phone frames */
+.phones{display:flex;flex-wrap:wrap;gap:22px}
+.phone{flex:1 1 220px;max-width:260px}
+.frame{container-type:inline-size;position:relative;aspect-ratio:9/16;border-radius:22px;overflow:hidden;border:1px solid var(--line);isolation:isolate}
+.cap{font-size:12px;color:var(--sand);margin-top:10px}
+.scene-sky{background:linear-gradient(180deg,#9fb9c9 0%,#c9d3d2 38%,#8d8a72 52%,#4b4a3a 70%,#26241f 100%)}
+.scene-dusk{background:linear-gradient(180deg,#e8b48a 0%,#d98b62 35%,#5a4a4a 58%,#2a2424 100%)}
+.scene-int{background:radial-gradient(circle at 70% 25%,#f2c786 0 8%,transparent 30%),linear-gradient(180deg,#3d3833,#1c1a18)}
+.figure{position:absolute;left:50%;bottom:0;width:42%;height:52%;transform:translateX(-50%);background:linear-gradient(#141210,#0c0b0a);border-radius:46% 46% 6px 6px / 22% 22% 6px 6px}
+.figure::before{content:"";position:absolute;left:50%;top:-24%;width:46%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:#2b2420}
+.safe{position:absolute;inset:11.5% 11% 22% 6%;border:1px dashed rgba(244,238,227,.35);border-radius:6px;pointer-events:none;z-index:5}
+.bug{position:absolute;top:5.5%;right:7%;z-index:6;width:26px;height:26px;border-radius:7px;background:var(--ember);color:var(--ink);display:grid;place-items:center;font:850 13px var(--font-display);font-variation-settings:"wdth" 125;opacity:.9}
+.stack{position:absolute;left:8%;right:12%;top:52%;z-index:4;display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.stack .con{font:600 5.6cqw var(--font-body);color:var(--bone);text-shadow:0 1px 6px rgba(0,0,0,.5)}
+.stack .key{position:relative;font:850 11.5cqw/1 var(--font-display);font-variation-settings:"wdth" 125;text-transform:uppercase;color:var(--bone);padding:2px 6px 4px;text-shadow:0 2px 10px rgba(0,0,0,.35)}
+.stack .key::before{content:"";position:absolute;left:0;bottom:3px;height:38%;width:100%;background:var(--ember);z-index:-1;transform-origin:left;}
+.stack .mod{font:italic 10.5cqw/1 var(--font-accent);color:var(--ember);margin-left:28%;white-space:nowrap;text-shadow:0 1px 8px rgba(0,0,0,.45)}
+.sub{position:absolute;left:8%;right:12%;top:72%;z-index:4;font:600 6cqw var(--font-body);color:var(--bone);text-shadow:0 1px 6px rgba(0,0,0,.6)}
+.sub span{opacity:.45}.sub span.on{opacity:1;color:var(--bone);border-bottom:2px solid var(--ember)}
+.numcard{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 10%;gap:6px;z-index:4}
+.numcard .big{font:850 64px/0.9 var(--font-display);font-variation-settings:"wdth" 125;color:var(--ember)}
+.numcard .big small{font-size:28px}
+.numcard .mod{font:italic 30px/1 var(--font-accent);color:var(--bone)}
+.numcard .con{font:600 13px var(--font-body);color:var(--sand)}
+.endcard{position:absolute;inset:0;background:var(--ink);display:flex;flex-direction:column;justify-content:flex-end;padding:0 10% 30%;gap:10px;z-index:4}
+.endcard .phone-no{white-space:nowrap;font:850 9.5cqw/1 var(--font-display);font-variation-settings:"wdth" 112;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.endcard .bar{height:6px;width:56px;background:var(--ember)}
+.endcard .line{font:italic 26px/1.05 var(--font-accent)}
+.endcard .con{font:600 12px var(--font-body);color:var(--sand)}
+
+/* motion: the signature "ember swipe" */
+@keyframes swipe{0%{transform:scaleX(0)}12%,100%{transform:scaleX(1)}}
+@keyframes pop{0%{transform:scale(1.14);filter:blur(3px)}10%,100%{transform:scale(1);filter:none}}
+@keyframes rise{0%,14%{transform:translateY(10px);opacity:.25}24%,100%{transform:none;opacity:1}}
+@keyframes punch{0%,48%{transform:scale(1)}50%,100%{transform:scale(1.12)}}
+.anim .stack .key::before{animation:swipe 3.2s cubic-bezier(.2,.8,.2,1) infinite}
+.anim .stack .key{animation:pop 3.2s cubic-bezier(.2,.8,.2,1) infinite}
+.anim .stack .mod{animation:rise 3.2s ease-out infinite}
+.anim .zoom{position:absolute;inset:0;animation:punch 3.2s steps(1) infinite;transform-origin:50% 60%}
+@media (prefers-reduced-motion:reduce){.anim *,.anim *::before{animation:none!important}}
+
+/* timeline */
+.tl{position:relative;height:64px;border-radius:8px;overflow:hidden;background:var(--ink-2);border:1px solid var(--line);display:flex}
+.tl div{border-right:1px solid var(--ink);display:flex;align-items:flex-end;padding:6px;font-size:11px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden}
+.tl .hook{background:var(--ember)}
+.tl .body{background:#5a524a;color:var(--bone)}
+.tl .burst{background:repeating-linear-gradient(90deg,var(--ember) 0 6px,#8a3412 6px 9px)}
+.tl .proof{background:#3e3934;color:var(--bone)}
+.tl .cta{background:var(--bone)}
+.ticks{display:flex;justify-content:space-between;font-size:11px;color:var(--sand);margin-top:6px;font-variant-numeric:tabular-nums}
+.legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:14px;font-size:13px;color:var(--sand)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+ul.tight{margin:0;padding-left:18px}
+ul.tight li{margin-bottom:6px}
+.dd{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media (max-width:640px){.dd{grid-template-columns:1fr}}
+.do h3{color:var(--bone)} .dont h3{color:var(--ember)}
+pre{background:var(--ink-2);border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto;font-size:12.5px;line-height:1.5;color:var(--bone);margin:0}
+.btn{background:var(--ember);color:var(--ink);border:0;border-radius:6px;padding:9px 14px;font:700 14px var(--font-body);cursor:pointer}
+.btn:hover{background:#ff7445}
+.row{display:flex;gap:12px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.status{font-size:13px;color:var(--sand)}
+footer{padding-top:32px;border-top:1px solid var(--line);font-size:13px;color:var(--sand)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">Reel brand sheet · draft 1 for review</div>
+  <div class="name-row">
+    <span class="mark"><span class="mono" id="mono">E</span></span>
+    <h1 id="brandName">Ember</h1>
+  </div>
+  <div class="name-row">
+    <label for="nameInput">Working name (type your own to preview it everywhere)</label>
+    <input id="nameInput" type="text" value="Ember" maxlength="24" autocomplete="off">
+  </div>
+  <p class="lede">A fast, talk-to-camera property and lifestyle reel style. Big keyword captions, one hot colour, punch-in zooms on the words that sell, and a short on-beat montage before the proof. It's built from what the three reference reels share, with its own type, colour and motion signature.</p>
+</header>
+
+<section id="study">
+  <div class="eyebrow">01 · What the references share</div>
+  <h2>The study</h2>
+  <p>I downloaded two of the three reels and measured them frame by frame: cut detection, contact sheets, loudness and a transcript. The third reel needs an Instagram login, so it isn't in these numbers.</p>
+  <div class="table-scroll panel" style="padding:0;margin-top:18px">
+  <table>
+    <thead><tr><th>Measure</th><th>Reel A · Safra (DfICk5ho_bD)</th><th>Reel B · Makkaan (DRUcTK-CHO0)</th><th>Shared pattern</th></tr></thead>
+    <tbody>
+      <tr><td>Format</td><td class="num">1080×1920, 29.97 fps, 64.5 s</td><td class="num">1080×1920, 25 fps, 53.4 s</td><td>Vertical, about one minute</td></tr>
+      <tr><td>Shots</td><td class="num">28 shots + 11 micro-cuts &lt;0.3 s</td><td class="num">17 shots + 2 micro-cuts</td><td>New picture every 1–2 s</td></tr>
+      <tr><td>Median shot</td><td class="num">1.84 s (0.42–5.56)</td><td class="num">1.20 s (0.52–7.52)</td><td>Short shots, one long hold on the hero shot</td></tr>
+      <tr><td>Montage burst</td><td>Map, drone and celebrity cut-ins</td><td>12.6–17.5 s, a cut every ~0.6 s on the beat</td><td>One rapid run of B-roll a third of the way in</td></tr>
+      <tr><td>Voice</td><td>Urdu, ~230 words/min, hype host on a rooftop</td><td>Roman-Urdu, calm presenter walking to camera</td><td>Host in black with sunglasses, wall-to-wall voiceover</td></tr>
+      <tr><td>Captions</td><td>Heavy white/yellow caps keyword + yellow script word + small lowercase subtitle, centred at ~55% height</td><td>Small white lead word + heavy lavender caps + white italic tail, top third</td><td>Three-tier stack: connector / KEYWORD / modifier, one accent colour</td></tr>
+      <tr><td>Motion graphics</td><td>Light-leak flash transitions, red map highlight, logo bug top-left</td><td>3D text tracked onto a building, word-by-word blur-in</td><td>Animated keywords, one graphic "wow" moment</td></tr>
+      <tr><td>Zooms</td><td>Punch-in jump cuts on the host</td><td>Slow push on renders, gimbal walk-ins</td><td>Scale changes on emphasis words</td></tr>
+      <tr><td>Loudness</td><td class="num">−14.1 LUFS, range 5.0 LU</td><td class="num">−14.2 LUFS, range 6.4 LU</td><td>Mastered to −14 LUFS, music bed under voice</td></tr>
+      <tr><td>Ending</td><td>Phone number pinned under every word for the last 8 s</td><td>Calm talk-to-camera close at the sales office</td><td>Direct call to action</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="mine">
+  <div class="eyebrow">02 · Make it mine</div>
+  <h2>What to keep, what to change</h2>
+  <div class="table-scroll panel" style="padding:0">
+  <table>
+    <thead><tr><th>Element</th><th>References do</th><th>Ember does</th></tr></thead>
+    <tbody>
+      <tr><td>Keyword type</td><td>Rounded geometric sans, black weight</td><td class="chg">Expanded grotesk (Archivo, width 125), feels architectural and wide like a skyline</td></tr>
+      <tr><td>Modifier word</td><td>Yellow brush script, or plain italic sans</td><td class="chg">Editorial serif italic (Instrument Serif) in ember</td></tr>
+      <tr><td>Accent colour</td><td>Yellow, or lavender with glow</td><td class="chg">Ember orange #FF5B22 on warm bone white. It holds up against blue sky and green hills, and no glow is needed</td></tr>
+      <tr><td>Emphasis device</td><td>Colour change only</td><td class="chg">Ember swipe: a bar wipes behind the keyword in 4 frames, then the word settles from 114%</td></tr>
+      <tr><td>Transitions</td><td>Rainbow light leaks</td><td class="chg">Warm 3-frame ember flash + 8-frame whip. No stock light leaks</td></tr>
+      <tr><td>Logo</td><td>Wordmark top-left</td><td class="chg">Square monogram top-right, 90% opacity, kept clear of the Reels UI</td></tr>
+      <tr><td>Caption position</td><td>Centre or top third</td><td class="chg">Left-aligned stack starting at 52% height, always inside the safe zone</td></tr>
+      <tr><td>Three-tier caption stack</td><td>Yes</td><td class="keep">Keep. It's what makes these readable with the sound off</td></tr>
+      <tr><td>Cut rhythm and montage burst</td><td>Yes</td><td class="keep">Keep, with fixed rules (section 05)</td></tr>
+      <tr><td>−14 LUFS master, ducked music</td><td>Yes</td><td class="keep">Keep (section 06)</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="colour">
+  <div class="eyebrow">03 · Colour</div>
+  <h2>Palette</h2>
+  <p>One accent only. Ember marks the word that sells, and nothing else on screen is orange at the same time.</p>
+  <div class="grid g3" style="margin-top:18px">
+    <div class="sw"><div class="chip" style="background:var(--ember);color:var(--ink)">EMBER</div><div class="meta"><b>Ember</b><code>#FF5B22</code> · keyword bar, modifier, numbers, monogram</div></div>
+    <div class="sw"><div class="chip" style="background:var(--bone);color:var(--ink)">BONE</div><div class="meta"><b>Bone</b><code>#F4EEE3</code> · all caption text. Never pure white</div></div>
+    <div class="sw"><div class="chip" style="background:var(--ink);color:var(--bone);border-bottom:1px solid var(--line)">INK</div><div class="meta"><b>Ink</b><code>#121110</code> · end card, lower scrims, text shadow tint</div></div>
+    <div class="sw"><div class="chip" style="background:var(--sand);color:var(--ink)">SAND</div><div class="meta"><b>Sand</b><code>#B8AC9B</code> · connector words on end cards, small print</div></div>
+    <div class="sw"><div class="chip" style="background:var(--ember-deep);color:var(--bone)">EMBER DEEP</div><div class="meta"><b>Ember deep</b><code>#C8410F</code> · ember on bright/white backgrounds</div></div>
+  </div>
+  <p style="margin-top:18px;color:var(--sand)">Grade: warm golden-hour, lifted shadows toward ink-brown, skies kept cool so ember pops. Skin first, then sky.</p>
+</section>
+
+<section id="type">
+  <div class="eyebrow">04 · Fonts and captions</div>
+  <h2>Type system</h2>
+  <div class="spec"><div class="lab">KEYWORD<br>Archivo, width 125, weight 850, caps<br>150–190 px at 1080 w</div><div class="t-key">Downtown</div></div>
+  <div class="spec"><div class="lab">MODIFIER<br>Instrument Serif italic, ember<br>120–150 px</div><div class="t-mod">ready to move</div></div>
+  <div class="spec"><div class="lab">CONNECTOR / SUBTITLE<br>Manrope semibold, bone<br>52–60 px, sentence case</div><div class="t-con">the next big address in Islamabad</div></div>
+  <div class="spec"><div class="lab">URDU SCRIPT (optional)<br>Noto Nastaliq Urdu 600<br>for Urdu-script versions</div><div class="t-urdu">اسلام آباد کا نقشہ بدل رہا ہے</div></div>
+
+  <div class="grid g2" style="margin-top:28px">
+    <div class="panel">
+      <h3>Caption rules</h3>
+      <ul class="tight">
+        <li>One keyword per beat, 1–2 words, caps. If it doesn't sell, it's a subtitle.</li>
+        <li>Modifier sits under the keyword, indented 28% from its left edge.</li>
+        <li>Subtitles run word by word under the stack. The spoken word is full bone with an ember underline, the rest at 45%.</li>
+        <li>Roman-Urdu spelled one consistent way per video ("hai", not "hy"/"hai" mixed).</li>
+        <li>Numbers (prices, %, dates) always go on a number card, never in a subtitle.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Placement at 1080×1920</h3>
+      <ul class="tight">
+        <li>Safe zone: 220 px top, 420 px bottom, 120 px right, 64 px left.</li>
+        <li>Stack starts at y = 1000 px, left-aligned at x = 86 px.</li>
+        <li>Monogram: 72 px square, 60 px from top-right safe edge.</li>
+        <li>Soft ink shadow: 0 4 24 px at 35%. No outlines, no boxes.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="frames">
+  <div class="eyebrow">05 · Cuts, zooms and pacing</div>
+  <h2>On screen</h2>
+  <p>Live mock-ups at phone scale. The dashed line is the Reels safe zone. Frame 1 loops the signature keyword animation with the punch-in zoom.</p>
+  <div class="phones" style="margin-top:20px">
+    <div class="phone">
+      <div class="frame scene-sky anim">
+        <div class="zoom"><div class="figure"></div></div>
+        <div class="safe"></div><div class="bug js-mono">E</div>
+        <div class="stack"><span class="con">this is the</span><span class="key">Downtown</span><span class="mod">address</span></div>
+        <div class="sub"><span>sab se</span> <span class="on">premium</span> <span>location</span></div>
+      </div>
+      <div class="cap">Keyword beat: ember swipe, word settles, 112% punch-in on the stressed syllable</div>
+    </div>
+    <div class="phone">
+      <div class="frame scene-dusk">
+        <div class="safe"></div><div class="bug js-mono">E</div>
+        <div class="numcard"><span class="con">only</span><span class="big">25<small>%</small></span><span class="mod">down payment</span></div>
+      </div>
+      <div class="cap">Number card: full-frame over a darkened drone shot, held 1.5 s</div>
+    </div>
+    <div class="phone">
+      <div class="frame scene-int">
+        <div class="figure" style="width:38%;height:48%"></div>
+        <div class="safe"></div><div class="bug js-mono">E</div>
+        <div class="stack"><span class="con">3 saal ka</span><span class="key">Smart</span><span class="mod">payment plan</span></div>
+      </div>
+      <div class="cap">Interior presenter: same stack, same position, every time</div>
+    </div>
+    <div class="phone">
+      <div class="frame">
+        <div class="endcard">
+          <span class="bar"></span>
+          <span class="line">Book your visit</span>
+          <span class="phone-no">0300 000 0000</span>
+          <span class="con js-name">Ember · Islamabad</span>
+        </div>
+        <div class="safe"></div>
+      </div>
+      <div class="cap">End card: ink, last 4 s, number in tabular figures</div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:36px">The 60-second structure</h3>
+  <div class="tl" role="img" aria-label="Timeline: hook 0 to 3 seconds, body 3 to 18, montage burst 18 to 23, body 23 to 40, proof hold 40 to 46, body 46 to 56, call to action 56 to 60">
+    <div class="hook" style="flex:3">HOOK</div>
+    <div class="body" style="flex:15">BODY · 1.6 s shots</div>
+    <div class="burst" style="flex:5">BURST</div>
+    <div class="body" style="flex:17">BODY · keyword beats</div>
+    <div class="proof" style="flex:6">PROOF</div>
+    <div class="body" style="flex:10">OFFER</div>
+    <div class="cta" style="flex:4">CTA</div>
+  </div>
+  <div class="ticks"><span>0 s</span><span>15</span><span>30</span><span>45</span><span>60 s</span></div>
+  <div class="legend">
+    <span><i style="background:var(--ember)"></i>Hook: bold claim in the first 3 s, caption on frame 1</span>
+    <span><i style="background:repeating-linear-gradient(90deg,var(--ember) 0 4px,#8a3412 4px 6px)"></i>Burst: 8–10 B-roll cuts at 0.5 s, on the beat</span>
+    <span><i style="background:#3e3934"></i>Proof: one 5–6 s hold (drone reveal or render)</span>
+    <span><i style="background:var(--bone)"></i>CTA: end card</span>
+  </div>
+
+  <div class="grid g3" style="margin-top:28px">
+    <div class="panel"><h3>Cuts</h3><ul class="tight"><li>Target median shot 1.6 s, never over 3 s except the proof hold.</li><li>Cut on the consonant, not the pause. Remove every breath.</li><li>Jump-cut the host freely. Change scale on each jump (100 → 112%).</li></ul></div>
+    <div class="panel"><h3>Zooms</h3><ul class="tight"><li>Punch-in: hard 112% cut on keywords, 2 per 10 s at most.</li><li>Drift: slow 100 → 106% push over any B-roll shot longer than 2 s.</li><li>No wobble or shake presets.</li></ul></div>
+    <div class="panel"><h3>Transitions</h3><ul class="tight"><li>Default is a hard cut.</li><li>Section change: 3-frame ember flash (ember at 60%, screen blend).</li><li>Into the burst: 8-frame whip pan with motion blur.</li></ul></div>
+  </div>
+</section>
+
+<section id="sound">
+  <div class="eyebrow">06 · Motion graphics, music and sound</div>
+  <h2>Motion and audio spec</h2>
+  <div class="grid g2">
+    <div class="panel">
+      <h3>Motion graphics</h3>
+      <ul class="tight">
+        <li><b>Ember swipe</b> (signature): bar scales 0 → 100% left to right in 4 frames, ease-out. Keyword lands from 114% with a 3 px blur over 3 frames. The modifier rises 10 px a frame later.</li>
+        <li><b>Map pin</b>: satellite still, ember outline drawn on over 12 frames, pin drops with a 2-frame overshoot.</li>
+        <li><b>One hero 3D moment</b> per video: the project name tracked onto a real surface (façade, hoarding, road).</li>
+        <li>Exit: everything cuts out with the shot. No fade-outs on captions.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Music and sound</h3>
+      <ul class="tight">
+        <li><b>Master</b>: −14 LUFS integrated, true peak −1 dBTP, loudness range 5–7 LU (both references sit at −14.1 and −14.2).</li>
+        <li><b>Voice</b>: up front. Music ducked 15–18 dB under speech, full level only during the burst.</li>
+        <li><b>Music</b>: 95–110 BPM, modern percussive, a clear drop where the burst starts. Licensed tracks only.</li>
+        <li><b>SFX</b>: soft tick on every ember swipe, whoosh on whips, short riser into the proof hold, sub hit on the number card.</li>
+        <li><b>Out</b>: music tail rings 0.8 s past the last word, then cut.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="dd" style="margin-top:28px">
+    <div class="panel do"><h3>Do</h3><ul class="tight"><li>One accent, one keyword at a time.</li><li>Shoot golden hour, host in a dark solid outfit.</li><li>Show the place: drone, walk-in, render, real site.</li><li>Pin the phone number on the end card.</li></ul></div>
+    <div class="panel dont"><h3>Don't</h3><ul class="tight"><li>Stock rainbow light leaks or glow text.</li><li>Script fonts, or two accent colours on screen at once.</li><li>Captions in the bottom 420 px (Reels UI covers them).</li><li>Music louder than voice outside the burst.</li></ul></div>
+  </div>
+</section>
+
+<section id="tokens">
+  <div class="eyebrow">07 · Hand-off</div>
+  <h2>Tokens for Remotion / HyperFrames</h2>
+  <p>The same values as a JSON block, ready to drop into a Remotion or HyperFrames template.</p>
+  <div class="row"><button class="btn" id="copyBtn" type="button">Copy tokens</button><span class="status" id="copyStatus" aria-live="polite"></span></div>
+<pre id="tokenJson">{
+  "canvas": { "width": 1080, "height": 1920, "fps": 30 },
+  "safe": { "top": 220, "bottom": 420, "left": 64, "right": 120 },
+  "color": { "ember": "#FF5B22", "emberDeep": "#C8410F", "bone": "#F4EEE3", "ink": "#121110", "sand": "#B8AC9B" },
+  "font": {
+    "keyword":  { "family": "Archivo", "wdth": 125, "weight": 850, "size": 170, "case": "upper" },
+    "modifier": { "family": "Instrument Serif", "style": "italic", "size": 136, "color": "ember" },
+    "subtitle": { "family": "Manrope", "weight": 600, "size": 56 },
+    "urdu":     { "family": "Noto Nastaliq Urdu", "weight": 600 }
+  },
+  "caption": { "stackY": 1000, "x": 86, "modifierOffsetX": "28%", "inactiveWordOpacity": 0.45 },
+  "motion": {
+    "swipeFrames": 4, "keywordScaleFrom": 1.14, "keywordBlurPx": 3, "modifierDelayFrames": 1,
+    "punchInScale": 1.12, "driftScale": [1.0, 1.06], "flashFrames": 3, "whipFrames": 8
+  },
+  "pacing": { "medianShotSec": 1.6, "maxShotSec": 3, "burstCutSec": 0.5, "proofHoldSec": [5, 6], "endCardSec": 4 },
+  "audio": { "lufs": -14, "truePeak": -1, "duckDb": -16, "bpm": [95, 110], "tailSec": 0.8 }
+}</pre>
+</section>
+
+<footer>Draft 1. Based on Reel A (Safra Developers) and Reel B (Makkaan.com). The third reel (C95AfDmiDlP) needs an Instagram login and isn't included yet.</footer>
+</div>
+
+<script>
+(function(){
+  var input=document.getElementById('nameInput');
+  function apply(v){
+    var name=(v||'').trim()||'Ember';
+    document.getElementById('brandName').textContent=name;
+    var m=name.charAt(0).toUpperCase();
+    document.getElementById('mono').textContent=m;
+    document.querySelectorAll('.js-mono').forEach(function(e){e.textContent=m;});
+    document.querySelectorAll('.js-name').forEach(function(e){e.textContent=name+' · Islamabad';});
+  }
+  try{var saved=localStorage.getItem('reelBrandName');if(saved){input.value=saved;apply(saved);}}catch(e){}
+  input.addEventListener('input',function(){apply(input.value);try{localStorage.setItem('reelBrandName',input.value);}catch(e){}});
+  document.getElementById('copyBtn').addEventListener('click',function(){
+    var s=document.getElementById('copyStatus');
+    navigator.clipboard.writeText(document.getElementById('tokenJson').textContent)
+      .then(function(){s.textContent='Copied.';})
+      .catch(function(){s.textContent='Copy was blocked here. Select the text and copy it by hand.';});
+  });
+})();
+</script>
+</body>
+</html>
