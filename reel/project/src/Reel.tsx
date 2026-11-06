@@ -160,27 +160,27 @@ const EndCard: React.FC = () => {
 // ---------- audio helpers ----------
 const sfx: {file: string; at: number; vol: number}[] = [];
 const add = (file: string, at: number, vol = 0.5) => sfx.push({file, at, vol});
-beats.forEach((b) => b.key && add('tick.wav', b.start + 2 / FPS, 0.28));
-add('riser.wav', B.hook.ev!.hit - 1.6, 0.35);
-add('subhit.wav', B.hook.ev!.hit, 0.6);
-add('whoosh.wav', B.burst.start - 0.12, 0.45);
-for (let i = 1; i < 6; i++) add('tick.wav', B.burst.start + ((B.burst.end - B.burst.start) * i) / 6, 0.22);
-add('pop.wav', B.question.ev!.pin, 0.45);
-add('pop.wav', B.malls.ev!.pin1, 0.45);
-add('pop.wav', B.malls.ev!.pin2, 0.45);
-add('riser.wav', B.offer.ev!.mezz - 1.6, 0.25);
-['ground', 'lg'].forEach((k) => add('tick.wav', B.offer.ev![k], 0.3));
-add('subhit.wav', B.offer.ev!.mezz, 0.5);
-add('tick.wav', B.cta.ev!.number, 0.3);
+beats.forEach((b) => b.key && add('tick.wav', b.start + 2 / FPS, 0.12));
+add('riser.wav', B.hook.ev!.hit - 1.6, 0.15);
+add('subhit.wav', B.hook.ev!.hit, 0.3);
+add('whoosh.wav', B.burst.start - 0.12, 0.2);
+for (let i = 1; i < 6; i++) add('tick.wav', B.burst.start + ((B.burst.end - B.burst.start) * i) / 6, 0.1);
+add('pop.wav', B.question.ev!.pin, 0.2);
+add('pop.wav', B.malls.ev!.pin1, 0.2);
+add('pop.wav', B.malls.ev!.pin2, 0.2);
+add('riser.wav', B.offer.ev!.mezz - 1.6, 0.1);
+['ground', 'lg'].forEach((k) => add('tick.wav', B.offer.ev![k], 0.12));
+add('subhit.wav', B.offer.ev!.mezz, 0.25);
+add('tick.wav', B.cta.ev!.number, 0.12);
 add('whoosh.wav', B.end.start - 0.1, 0.35);
 
 const musicVolume = (frame: number) => {
   const t = frame / FPS;
   const ramp = (a: number, b: number, v0: number, v1: number) => interpolate(t, [a, b], [v0, v1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
-  if (t < B.hook.ev!.hit) return 0.22;                              // filtered intro under the voice
-  if (t >= B.burst.start - 0.1 && t < B.burst.end) return 0.42;    // lift for the burst (voice continues)
-  if (t >= B.end.start - 0.15) return ramp(B.end.start - 0.15, B.end.start + 0.2, 0.17, 0.85);
-  return 0.17;                                                      // ~ -15 dB under speech
+  const UNDER = 0.1;                                                // ~ -20 dB below the voice while speaking
+  if (t >= B.end.start - 0.15) return ramp(B.end.start - 0.15, B.end.start + 0.3, UNDER, 0.75);
+  if (t >= B.burst.start - 0.1 && t < B.burst.end) return 0.16;     // small lift for the drone montage
+  return UNDER;
 };
 
 export const Reel: React.FC<{withMusic: boolean}> = ({withMusic}) => {
