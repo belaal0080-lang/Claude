@@ -109,7 +109,7 @@ for t in timeline:
     for s in segs:
         d = s["s1"] - s["s0"]
         af.append(f"[{ai}:a]atrim={s['s0']}:{s['s1']},asetpts=PTS-STARTPTS,"
-                  f"afade=t=in:d=0.004,afade=t=out:st={max(d-0.004,0):.3f}:d=0.004[a{n}]")
+                  f"afade=t=in:d=0.008,afade=t=out:st={max(d-0.008,0):.3f}:d=0.008[a{n}]")
         alabels.append(f"[a{n}]"); n += 1
     vi = idx[RAW + segs[0]["src"] + ".mov"]
     if vis["kind"] == "broll":
@@ -148,8 +148,8 @@ for t in timeline:
             d = s["s1"] - s["s0"]
             sc = vis.get("scale", 1.0)
             if punch is not None and s["o0"] + d > punch:
-                if s["o0"] < punch:  # split this piece at the punch point
-                    cut = round((s["s0"] + (punch - s["o0"])) * FPS) / FPS
+                cut = round((s["s0"] + (punch - s["o0"])) * FPS) / FPS
+                if s["o0"] < punch and cut - s["s0"] >= 1 / FPS and s["s1"] - cut >= 1 / FPS:  # split this piece at the punch point
                     vf.append(f"[{vi}:v]trim={s['s0']}:{cut:.4f},setpts=PTS-STARTPTS,fps={FPS},{scale_expr(sc)},{GRADE},setsar=1[v{n}]")
                     vlabels.append(f"[v{n}]"); n += 1
                     vf.append(f"[{vi}:v]trim={cut:.4f}:{s['s1']},setpts=PTS-STARTPTS,fps={FPS},{scale_expr(1.12)},{GRADE},setsar=1[v{n}]")
@@ -187,7 +187,9 @@ for k, line in enumerate(vf):
     out = f"{W}pieces/p{k:03d}.mov"
     if m:
         src = inputs[int(m.group(1))]
-        cmds.append(f'/usr/bin/ffmpeg -hide_banner -loglevel error -y -i "{src}" -filter_complex "[0:v]{m.group(2)},format=yuv420p[o]" -map "[o]" -an -c:v libx264 -preset fast -crf 12 -r {FPS} "{out}"')
+        t0, t1 = map(float, re.search(r"trim=([0-9.]+):([0-9.]+)", m.group(2)).groups())
+        nf = int(round((t1 - t0) * FPS))
+        cmds.append(f'/usr/bin/ffmpeg -hide_banner -loglevel error -y -i "{src}" -filter_complex "[0:v]{m.group(2)},tpad=stop_mode=clone:stop=5,format=yuv420p[o]" -map "[o]" -an -frames:v {nf} -c:v libx264 -preset fast -crf 12 -r {FPS} "{out}"')
     else:
         chain = line.rsplit("[", 1)[0]
         cmds.append(f'/usr/bin/ffmpeg -hide_banner -loglevel error -y -f lavfi -i "{chain},format=yuv420p" -an -c:v libx264 -preset fast -crf 12 -r {FPS} "{out}"')

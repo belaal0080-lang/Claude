@@ -5,9 +5,9 @@ def env(path):
     for i in range(0,len(a)-win,win):
         s=sum(x*x for x in a[i:i+win])/win; db.append(10*math.log10(s/32768**2+1e-12))
     return db
-def keeps(path,mingap=0.10,handle=0.04):
+def keeps(path,mingap=0.10,handle=0.05):
     db=env(path);srt=sorted(db);floor=srt[int(.1*len(srt))];peak=srt[int(.95*len(srt))]
-    thr=floor+0.55*(peak-floor)
+    thr=floor+0.45*(peak-floor)
     voiced=[d>=thr for d in db]; T=len(db)*0.01
     gaps=[];run=0
     for i,v in enumerate(voiced+[True]):
@@ -21,7 +21,17 @@ def keeps(path,mingap=0.10,handle=0.04):
         if a<=cur: cur=max(cur,b); continue
         segs.append((round(cur,2),round(a,2))); cur=b
     if cur<T: segs.append((round(cur,2),round(T,2)))
-    segs=[s for s in segs if s[1]-s[0]>0.06]
+    # merge fragments: a piece shorter than 0.18 s joins its nearer neighbour when the gap is < 0.25 s, else is dropped
+    changed=True
+    while changed:
+        changed=False
+        for i,(a,b) in enumerate(segs):
+            if b-a>=0.18: continue
+            gl=a-segs[i-1][1] if i>0 else 9; gr=segs[i+1][0]-b if i<len(segs)-1 else 9
+            if min(gl,gr)<0.25:
+                if gl<=gr: segs[i-1]=(segs[i-1][0],b)
+                else: segs[i+1]=(a,segs[i+1][1])
+            del segs[i]; changed=True; break
     return segs,gaps,thr
 if __name__=='__main__':
     out={}

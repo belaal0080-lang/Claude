@@ -1,17 +1,17 @@
 {
  "fps": 30,
- "total": 34.501,
- "voice": 31.901,
+ "total": 33.067,
+ "voice": 30.467,
  "beats": [
   {
    "id": "hook",
    "start": 0.0,
-   "end": 3.133,
+   "end": 3.034,
    "con": "naya",
    "key": "Commercial",
    "mod": "hub",
    "ev": {
-    "hit": 2.033
+    "hit": 1.967
    },
    "vis": {
     "kind": "broll",
@@ -21,8 +21,8 @@
   },
   {
    "id": "intro",
-   "start": 3.133,
-   "end": 5.333,
+   "start": 3.034,
+   "end": 5.167,
    "con": "aaj hum hain",
    "key": "Giga Mall",
    "mod": "extension",
@@ -34,25 +34,25 @@
   },
   {
    "id": "question",
-   "start": 5.333,
-   "end": 9.767,
+   "start": 5.167,
+   "end": 9.434,
    "con": "sab se ahem sawal",
    "key": "Location",
    "mod": "kya hai?",
    "ev": {
-    "pin": 9.084
+    "pin": 8.767
    },
    "vis": {
     "kind": "aroll",
     "scale": 1.0,
     "punch": 7.55,
-    "punch_out": 9.084
+    "punch_out": 8.767
    }
   },
   {
    "id": "best",
-   "start": 9.767,
-   "end": 12.7,
+   "start": 9.434,
+   "end": 12.167,
    "con": "yeh hai",
    "key": "Best",
    "mod": "location",
@@ -64,8 +64,8 @@
   },
   {
    "id": "burst",
-   "start": 12.7,
-   "end": 15.967,
+   "start": 12.167,
+   "end": 15.333,
    "con": "renowned developer ka",
    "key": "Successful",
    "mod": "project",
@@ -76,14 +76,14 @@
   },
   {
    "id": "malls",
-   "start": 15.967,
-   "end": 18.567,
+   "start": 15.333,
+   "end": 17.8,
    "con": "saamne aur saath",
    "key": "Malls",
    "mod": "all around",
    "ev": {
-    "pin1": 16.134,
-    "pin2": 17.4
+    "pin1": 15.5,
+    "pin2": 16.733
    },
    "vis": {
     "kind": "aroll",
@@ -92,31 +92,31 @@
   },
   {
    "id": "offer",
-   "start": 18.567,
-   "end": 26.534,
+   "start": 17.8,
+   "end": 25.334,
    "con": "kuch units abhi bhi",
    "key": "Available",
    "mod": "",
    "ev": {
-    "ground": 21.534,
-    "lg": 22.6,
-    "mezz": 23.267
+    "ground": 20.7,
+    "lg": 21.734,
+    "mezz": 22.367
    },
    "vis": {
     "kind": "offer",
     "split": 4.0,
-    "split_out": 20.1666
+    "split_out": 20.0333
    }
   },
   {
    "id": "cta",
-   "start": 26.534,
-   "end": 31.901,
+   "start": 25.334,
+   "end": 30.467,
    "con": "apna unit",
    "key": "Book",
    "mod": "karwain aaj hi",
    "ev": {
-    "number": 30.134
+    "number": 28.734
    },
    "vis": {
     "kind": "aroll",
@@ -125,8 +125,8 @@
   },
   {
    "id": "end",
-   "start": 31.901,
-   "end": 34.501
+   "start": 30.467,
+   "end": 33.067
   }
  ]
 }
