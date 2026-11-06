@@ -1,0 +1,132 @@
+{
+ "fps": 30,
+ "total": 34.501,
+ "voice": 31.901,
+ "beats": [
+  {
+   "id": "hook",
+   "start": 0.0,
+   "end": 3.133,
+   "con": "naya",
+   "key": "Commercial",
+   "mod": "hub",
+   "ev": {
+    "hit": 2.033
+   },
+   "vis": {
+    "kind": "broll",
+    "file": "clip5.mov",
+    "ss": 0.0
+   }
+  },
+  {
+   "id": "intro",
+   "start": 3.133,
+   "end": 5.333,
+   "con": "aaj hum hain",
+   "key": "Giga Mall",
+   "mod": "extension",
+   "ev": {},
+   "vis": {
+    "kind": "aroll",
+    "scale": 1.0
+   }
+  },
+  {
+   "id": "question",
+   "start": 5.333,
+   "end": 9.767,
+   "con": "sab se ahem sawal",
+   "key": "Location",
+   "mod": "kya hai?",
+   "ev": {
+    "pin": 9.084
+   },
+   "vis": {
+    "kind": "aroll",
+    "scale": 1.0,
+    "punch": 7.55,
+    "punch_out": 9.084
+   }
+  },
+  {
+   "id": "best",
+   "start": 9.767,
+   "end": 12.7,
+   "con": "yeh hai",
+   "key": "Best",
+   "mod": "location",
+   "ev": {},
+   "vis": {
+    "kind": "aroll",
+    "scale": 1.0
+   }
+  },
+  {
+   "id": "burst",
+   "start": 12.7,
+   "end": 15.967,
+   "con": "renowned developer ka",
+   "key": "Successful",
+   "mod": "project",
+   "ev": {},
+   "vis": {
+    "kind": "burst"
+   }
+  },
+  {
+   "id": "malls",
+   "start": 15.967,
+   "end": 18.567,
+   "con": "saamne aur saath",
+   "key": "Malls",
+   "mod": "all around",
+   "ev": {
+    "pin1": 16.134,
+    "pin2": 17.4
+   },
+   "vis": {
+    "kind": "aroll",
+    "scale": 1.06
+   }
+  },
+  {
+   "id": "offer",
+   "start": 18.567,
+   "end": 26.534,
+   "con": "kuch units abhi bhi",
+   "key": "Available",
+   "mod": "",
+   "ev": {
+    "ground": 21.534,
+    "lg": 22.6,
+    "mezz": 23.267
+   },
+   "vis": {
+    "kind": "offer",
+    "split": 4.0,
+    "split_out": 20.1666
+   }
+  },
+  {
+   "id": "cta",
+   "start": 26.534,
+   "end": 31.901,
+   "con": "apna unit",
+   "key": "Book",
+   "mod": "karwain aaj hi",
+   "ev": {
+    "number": 30.134
+   },
+   "vis": {
+    "kind": "aroll",
+    "scale": 1.08
+   }
+  },
+  {
+   "id": "end",
+   "start": 31.901,
+   "end": 34.501
+  }
+ ]
+}
