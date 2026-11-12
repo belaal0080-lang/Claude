@@ -1,0 +1,10 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "local-skills",
+  "owner": { "name": "local" },
+  "metadata": { "description": "Vendored third-party Claude Code plugins (SEO and blog suites)." },
+  "plugins": [
+    { "name": "claude-seo", "source": "./plugins/claude-seo", "description": "SEO suite: technical SEO, content, schema, local, GEO, backlinks (AgriciDaniel/claude-seo)." },
+    { "name": "claude-blog", "source": "./plugins/claude-blog", "description": "Blog suite: research, outline, write, rewrite, audit, SEO/GEO scoring (AgriciDaniel/claude-blog)." }
+  ]
+}
