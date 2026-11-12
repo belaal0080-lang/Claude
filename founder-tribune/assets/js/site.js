@@ -18,7 +18,7 @@
   function rng(seed) { let h = 2166136261; for (const c of seed) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return () => { h += 0x6D2B79F5; let t = h; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
   function mix(hex, to, amt) { const p = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)); const a = p(hex), b = p(to); return '#' + a.map((v, i) => Math.round(v + (b[i] - v) * amt).toString(16).padStart(2, '0')).join(''); }
   function cover(a) {
-    if (a.image) return `<span class="cover"><img src="${esc(a.image)}" alt="" loading="lazy"></span>`;
+    if (a.image) return `<span class="cover"><img src="${esc(a.image)}" alt="${esc(a.alt || '')}" loading="lazy" decoding="async" width="1400" height="875"></span>`;
     const r = rng(a.slug), c = sec(a.section).color;
     const bg = mix(c, '#000000', .28), lite = mix(c, '#ffffff', .38), pale = mix(c, '#ffffff', .78), gold = '#ffb627';
     const kind = Math.floor(r() * 5); let g = '';
@@ -169,7 +169,7 @@
           <div class="byline"><div class="byline-who"><span class="avatar">${initials(au.name)}</span><span><b>${esc(au.name)}</b><span>${esc(au.role)}, ${fmt(a.date, { month: 'long', day: 'numeric', year: 'numeric' })}, ${a.read} min read</span></span></div>
             <div class="share"><span>Share</span><a href="https://www.linkedin.com/sharing/share-offsite/?url=${here}" target="_blank" rel="noopener">LinkedIn</a><a href="https://twitter.com/intent/tweet?url=${here}&text=${t}" target="_blank" rel="noopener">X</a><a href="mailto:?subject=${t}&body=${here}">Email</a><button type="button" id="copy">Copy link</button></div></div>
         </div></header>
-        <div class="article-cover"><div class="wrap">${cover(a)}</div></div>
+        <figure class="article-cover"><div class="wrap">${cover(a)}${a.credit ? `<figcaption>${esc(a.alt || '')}. Photo by <a href="${esc(a.credit.url)}" target="_blank" rel="noopener">${esc(a.credit.name)}</a> on <a href="https://unsplash.com/?utm_source=founder_tribune&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a></figcaption>` : ''}</div></figure>
         <div class="article-body">
           <div>${a.takeaways ? `<section class="takeaways"><h2>Key points</h2><ul>${a.takeaways.map(x => `<li>${esc(x)}</li>`).join('')}</ul></section>` : ''}
             <div class="prose">${body}</div>

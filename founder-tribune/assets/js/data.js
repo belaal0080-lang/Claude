@@ -1,5 +1,5 @@
 /* Founder Tribune content. Sample stories: replace with real reporting.
-   To use a photo instead of a generated cover, add  image: 'assets/img/your-photo.jpg'  to a story. */
+   Each story has image, alt and credit fields. Remove image to fall back to a generated cover. */
 window.FT = {
   config: {
     name: 'Founder Tribune',
@@ -38,7 +38,7 @@ window.FT = {
     { co: 'Sable Learning', sector: 'Workforce training', round: 'Pre-seed', amt: '$1.8M', lead: 'Open Door Fund',     date: '2026-11-03' }
   ],
   articles: [
-    { slug: 'harborline-series-b', section: 'funding', author: 'daniel', date: '2026-11-11', read: 6, featured: true,
+    { slug: 'harborline-series-b', image: 'assets/img/stories/harborline-series-b.jpg', alt: "Trucks and trailers parked in front of a warehouse", credit: { name: "Troy Mortier", url: 'https://unsplash.com/@troyscanon?utm_source=founder_tribune&utm_medium=referral' }, section: 'funding', author: 'daniel', date: '2026-11-11', read: 6, featured: true,
       title: 'Harborline raises $42 million to put small freight brokers on one screen',
       dek: 'Founder Ana Castellanos turned down two larger offers to keep control of the board. She explains the trade.',
       body: [
@@ -54,7 +54,7 @@ window.FT = {
       ],
       takeaways: ['Harborline raised $42M at Series B, led by Northgate Partners.', 'The founder rejected larger offers that required a second investor board seat.', 'Funds go to a customs product and expansion into Mexico and Canada.'] },
 
-    { slug: 'kitchen-table-to-40-stores', section: 'startups', author: 'omar', date: '2026-11-10', read: 8, featured: true, interview: true,
+    { slug: 'kitchen-table-to-40-stores', image: 'assets/img/stories/kitchen-table-to-40-stores.jpg', alt: "A potter's wheel spinning beside bowls of clay tools", credit: { name: "Taylor Heery", url: 'https://unsplash.com/@taylorheeryphoto?utm_source=founder_tribune&utm_medium=referral' }, section: 'startups', author: 'omar', date: '2026-11-10', read: 8, featured: true, interview: true,
       title: 'From a kitchen table to 40 stores in 18 months',
       dek: 'Kiln & Co founder Rosa Delgado on selling ceramics wholesale before she had a website, and why she still packs orders on Fridays.',
       quote: 'I packed the first thousand orders myself. That is how I learned what customers complain about before they complain.',
@@ -71,7 +71,7 @@ window.FT = {
       ],
       takeaways: ['Selling wholesale first gave Kiln & Co faster cash than a direct website.', 'The founder found two best sellers were losing money once a bookkeeper was hired.', 'Know your unit cost before accepting a large order.'] },
 
-    { slug: 'four-day-week-18-months', section: 'leadership', author: 'tom', date: '2026-11-09', read: 7, featured: true,
+    { slug: 'four-day-week-18-months', image: 'assets/img/stories/four-day-week-18-months.jpg', alt: "Four coworkers around a laptop at a table", credit: { name: "Jud Mackrill", url: 'https://unsplash.com/@judmackrill?utm_source=founder_tribune&utm_medium=referral' }, section: 'leadership', author: 'tom', date: '2026-11-09', read: 7, featured: true,
       title: 'We ran a four-day week for 18 months. Here is what broke',
       dek: 'Lumen Desk kept the shorter week, but only after rewriting how the support team hands over work.',
       body: [
@@ -84,7 +84,7 @@ window.FT = {
         'Marchetti does not recommend the change to every company. Teams that depend on live coverage, he says, should fix their handovers first and shorten the week second.'
       ] },
 
-    { slug: 'ai-agents-back-office', section: 'technology', author: 'priya', date: '2026-11-11', read: 5,
+    { slug: 'ai-agents-back-office', image: 'assets/img/stories/ai-agents-back-office.jpg', alt: "A laptop on a desk after work", credit: { name: "Luca Bravo", url: 'https://unsplash.com/@lucabravo?utm_source=founder_tribune&utm_medium=referral' }, section: 'technology', author: 'priya', date: '2026-11-11', read: 5,
       title: 'Small companies are handing the back office to AI agents. The invoices tell the story',
       dek: 'Three founders opened their books to show what automation saved, what it cost and where it made mistakes.',
       body: [
@@ -97,7 +97,7 @@ window.FT = {
         'Monthly bills ranged from $400 to $2,300, mostly driven by how many documents were processed. Each founder said the cost was lower than a part-time hire, and each kept a person in the approval step.'
       ] },
 
-    { slug: 'founder-salary-what-to-pay-yourself', section: 'money', author: 'lena', date: '2026-11-08', read: 6,
+    { slug: 'founder-salary-what-to-pay-yourself', image: 'assets/img/stories/founder-salary-what-to-pay-yourself.jpg', alt: "A person holding paperwork beside a pen and calculator", credit: { name: "Kelly Sikkema", url: 'https://unsplash.com/@kellysikkema?utm_source=founder_tribune&utm_medium=referral' }, section: 'money', author: 'lena', date: '2026-11-08', read: 6,
       title: 'What should a founder pay themselves? Forty founders shared their numbers',
       dek: 'Pay rose with each funding round, but the widest gap was between founders who had savings and those who did not.',
       body: [
@@ -109,7 +109,7 @@ window.FT = {
         'This was a small group and not a survey of the whole market. It does suggest a practical rule several founders repeated: set pay at the level where money stops being a daily worry, and say so plainly to your board.'
       ] },
 
-    { slug: 'founders-who-sleep', section: 'lifestyle', author: 'lena', date: '2026-11-07', read: 4,
+    { slug: 'founders-who-sleep', image: 'assets/img/stories/founders-who-sleep.jpg', alt: "A runner on a waterfront path in the city", credit: { name: "Zoshua Colah", url: 'https://unsplash.com/@zoshuacolah?utm_source=founder_tribune&utm_medium=referral' }, section: 'lifestyle', author: 'lena', date: '2026-11-07', read: 4,
       title: 'The founders who decided to sleep',
       dek: 'Five people who run growing companies describe the routines that replaced the all-nighter.',
       body: [
@@ -121,7 +121,7 @@ window.FT = {
         'Each of them said the hardest part was the first month, when the old habit still felt like commitment.'
       ] },
 
-    { slug: 'stop-calling-it-a-pivot', section: 'opinion', author: 'maya', date: '2026-11-10', read: 4,
+    { slug: 'stop-calling-it-a-pivot', image: 'assets/img/stories/stop-calling-it-a-pivot.jpg', alt: "A person arranging paper notes on a board", credit: { name: "Alvaro Reyes", url: 'https://unsplash.com/@alvarordesign?utm_source=founder_tribune&utm_medium=referral' }, section: 'opinion', author: 'maya', date: '2026-11-10', read: 4,
       title: 'Stop calling it a pivot. You were wrong, and that is fine',
       dek: 'The word lets founders skip the useful part, which is working out why the first idea failed.',
       body: [
@@ -132,7 +132,7 @@ window.FT = {
         'Investors and employees forgive being wrong. They are less patient with founders who cannot explain how.'
       ] },
 
-    { slug: 'your-first-ten-hires', section: 'opinion', author: 'tom', date: '2026-11-06', read: 5,
+    { slug: 'your-first-ten-hires', image: 'assets/img/stories/your-first-ten-hires.jpg', alt: "Two people shaking hands across a desk", credit: { name: "Mina Rad", url: 'https://unsplash.com/@miinrad?utm_source=founder_tribune&utm_medium=referral' }, section: 'opinion', author: 'tom', date: '2026-11-06', read: 5,
       title: 'Your first ten hires are your culture. Your values page is a poster',
       dek: 'What a company rewards in its first year is what it becomes. Choose those ten people accordingly.',
       body: [
@@ -143,7 +143,7 @@ window.FT = {
         'Write the values page later. For now, decide what you will praise in public this week.'
       ] },
 
-    { slug: 'investors-want-profit-again', section: 'opinion', author: 'daniel', date: '2026-11-04', read: 4,
+    { slug: 'investors-want-profit-again', image: 'assets/img/stories/investors-want-profit-again.jpg', alt: "A person signing a document", credit: { name: "Scott Graham", url: 'https://unsplash.com/@amstram?utm_source=founder_tribune&utm_medium=referral' }, section: 'opinion', author: 'daniel', date: '2026-11-04', read: 4,
       title: 'Investors say they want profit again. Check the term sheets',
       dek: 'The language has changed. The incentives inside a venture fund have not.',
       body: [
@@ -153,7 +153,7 @@ window.FT = {
         'Ask a prospective investor which of their companies chose slower growth, and what the partner did when that happened. The answer tells you more than the pitch.'
       ] },
 
-    { slug: 'orchard-grid-series-c', section: 'funding', author: 'daniel', date: '2026-11-06', read: 5,
+    { slug: 'orchard-grid-series-c', image: 'assets/img/stories/orchard-grid-series-c.jpg', alt: "A solar farm seen from above", credit: { name: "Green Voltaics Solar Energy", url: 'https://unsplash.com/@greenvoltaics?utm_source=founder_tribune&utm_medium=referral' }, section: 'funding', author: 'daniel', date: '2026-11-06', read: 5,
       title: 'Orchard Grid closes $90 million to build batteries beside farms',
       dek: 'The Series C is one of the largest energy storage rounds this quarter and comes with a factory commitment in Ohio.',
       body: [
@@ -164,7 +164,7 @@ window.FT = {
         'The company is not yet profitable. Reid says it expects to be once the factory reaches full output.'
       ] },
 
-    { slug: 'seed-rounds-getting-smaller', section: 'funding', author: 'daniel', date: '2026-11-03', read: 5,
+    { slug: 'seed-rounds-getting-smaller', image: 'assets/img/stories/seed-rounds-getting-smaller.jpg', alt: "People working at laptops around a table", credit: { name: "Cherrydeck", url: 'https://unsplash.com/@cherrydeck?utm_source=founder_tribune&utm_medium=referral' }, section: 'funding', author: 'daniel', date: '2026-11-03', read: 5,
       title: 'Seed rounds are getting smaller, and some founders prefer it',
       dek: 'Cheaper tools mean a first product costs less to build. Founders are raising less and keeping more.',
       body: [
@@ -174,7 +174,7 @@ window.FT = {
         'Clarke and her co-founder kept 82 percent of the company after the round. Several early investors told us they now see small rounds as a sign of discipline, though others worry such companies will be short of cash if growth takes longer than planned.'
       ] },
 
-    { slug: 'plainsight-payroll-launch', section: 'startups', author: 'omar', date: '2026-11-08', read: 4,
+    { slug: 'plainsight-payroll-launch', image: 'assets/img/stories/plainsight-payroll-launch.jpg', alt: "A calculator on a desk next to a laptop", credit: { name: "Jakub Żerdzicki", url: 'https://unsplash.com/@jakubzerdzicki?utm_source=founder_tribune&utm_medium=referral' }, section: 'startups', author: 'omar', date: '2026-11-08', read: 4,
       title: 'Plainsight Pay wants payroll to take one click for firms under 20 people',
       dek: 'Two former accountants built the product they wanted their clients to have.',
       body: [
@@ -184,7 +184,7 @@ window.FT = {
         'Lindqvist says investors pushed them to add benefits and HR tools. They refused, and closed a $6.5 million seed round anyway.'
       ] },
 
-    { slug: 'second-city-startups', section: 'startups', author: 'omar', date: '2026-11-05', read: 6,
+    { slug: 'second-city-startups', image: 'assets/img/stories/second-city-startups.jpg', alt: "A brick building in downtown Chattanooga", credit: { name: "Kevin Dunlap", url: 'https://unsplash.com/@kevinadunlap?utm_source=founder_tribune&utm_medium=referral' }, section: 'startups', author: 'omar', date: '2026-11-05', read: 6,
       title: 'The startups choosing second cities, and what they give up',
       dek: 'Lower rent and loyal staff on one side. Fewer investors and senior hires on the other.',
       body: [
@@ -194,7 +194,7 @@ window.FT = {
         'Founders we spoke to said second cities work best for companies that build physical things or sell to local industry. Companies that need many senior software hires found it harder.'
       ] },
 
-    { slug: 'firing-a-co-founder', section: 'leadership', author: 'tom', date: '2026-11-05', read: 7,
+    { slug: 'firing-a-co-founder', image: 'assets/img/stories/firing-a-co-founder.jpg', alt: "Two colleagues in conversation", credit: { name: "Christina @ wocintechchat.com", url: 'https://unsplash.com/@wocintechchat?utm_source=founder_tribune&utm_medium=referral' }, section: 'leadership', author: 'tom', date: '2026-11-05', read: 7,
       title: 'How to part ways with a co-founder without ending the company',
       dek: 'Three founders who went through it describe what they wish they had agreed on day one.',
       body: [
@@ -205,7 +205,7 @@ window.FT = {
         'None of the three companies failed. Each lost about six months.'
       ] },
 
-    { slug: 'the-weekly-letter', section: 'leadership', author: 'maya', date: '2026-11-02', read: 4,
+    { slug: 'the-weekly-letter', image: 'assets/img/stories/the-weekly-letter.jpg', alt: "A laptop, mug and phone on a table", credit: { name: "Andrew Neel", url: 'https://unsplash.com/@andrewtneel?utm_source=founder_tribune&utm_medium=referral' }, section: 'leadership', author: 'maya', date: '2026-11-02', read: 4,
       title: 'The weekly letter: one habit that keeps a growing team informed',
       dek: 'A short Friday note from the chief executive replaced three recurring meetings at one 60-person company.',
       body: [
@@ -215,7 +215,7 @@ window.FT = {
         'Employees told us the section on worries is the one they read first. It tells them what matters before it becomes urgent.'
       ] },
 
-    { slug: 'own-your-customer-data', section: 'technology', author: 'priya', date: '2026-11-07', read: 5,
+    { slug: 'own-your-customer-data', image: 'assets/img/stories/own-your-customer-data.jpg', alt: "A rack of servers in a server room", credit: { name: "Kevin Ache", url: 'https://unsplash.com/@kevinache?utm_source=founder_tribune&utm_medium=referral' }, section: 'technology', author: 'priya', date: '2026-11-07', read: 5,
       title: 'Founders are moving customer data back in-house',
       dek: 'Rising platform fees and sudden rule changes are pushing small companies to keep their own records.',
       body: [
@@ -225,7 +225,7 @@ window.FT = {
         'Priya Nair found that most small firms need only a database, a nightly backup and one person responsible for both.'
       ] },
 
-    { slug: 'no-code-limits', section: 'technology', author: 'priya', date: '2026-11-03', read: 5,
+    { slug: 'no-code-limits', image: 'assets/img/stories/no-code-limits.jpg', alt: "Code on a computer screen", credit: { name: "Chris Ried", url: 'https://unsplash.com/@cdr6934?utm_source=founder_tribune&utm_medium=referral' }, section: 'technology', author: 'priya', date: '2026-11-03', read: 5,
       title: 'Where no-code tools stop: lessons from three rebuilds',
       dek: 'Each company launched without engineers and later rebuilt. None regrets the first version.',
       body: [
@@ -235,7 +235,7 @@ window.FT = {
         'Their shared advice: launch fast, keep your data exportable and expect to rebuild once the product has proved itself.'
       ] },
 
-    { slug: 'equity-tax-mistakes', section: 'money', author: 'lena', date: '2026-11-04', read: 6,
+    { slug: 'equity-tax-mistakes', image: 'assets/img/stories/equity-tax-mistakes.jpg', alt: "A tax form with a pen and phone", credit: { name: "Kelly Sikkema", url: 'https://unsplash.com/@kellysikkema?utm_source=founder_tribune&utm_medium=referral' }, section: 'money', author: 'lena', date: '2026-11-04', read: 6,
       title: 'Five equity tax mistakes founders make in year one',
       dek: 'Missing one filing deadline can cost more than the first year of salary. An adviser walks through the common errors.',
       body: [
@@ -245,7 +245,7 @@ window.FT = {
         'This article is general information and not tax advice. Rules differ by country and state, so speak to a qualified adviser before you act.'
       ] },
 
-    { slug: 'founder-sabbatical', section: 'lifestyle', author: 'lena', date: '2026-11-01', read: 5,
+    { slug: 'founder-sabbatical', image: 'assets/img/stories/founder-sabbatical.jpg', alt: "A hiker with a backpack on a mountain trail", credit: { name: "Holly Mandarich", url: 'https://unsplash.com/@hollymandarich?utm_source=founder_tribune&utm_medium=referral' }, section: 'lifestyle', author: 'lena', date: '2026-11-01', read: 5,
       title: 'She took a month off from her own company. It kept running',
       dek: 'A planned sabbatical showed one founder which decisions only she could make. There were fewer than she thought.',
       body: [

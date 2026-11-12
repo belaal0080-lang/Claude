@@ -225,6 +225,10 @@ a:hover > .cover svg, a:hover > .cover img, .story:hover .cover svg, .story:hove
 .share { display: flex; gap: 8px; align-items: center; font-family: var(--display); font-size: 14px; }
 .share a, .share button { border: 2px solid var(--rule); background: #fff; border-radius: 999px; padding: 8px 14px; font-weight: 600; cursor: pointer; font-size: 14px; }
 .share a:hover, .share button:hover { border-color: var(--ink); }
+.article-cover { margin: 0; }
+.article-cover figcaption { font-family: var(--display); font-size: 13.5px; color: var(--muted); margin-top: 10px; }
+.article-cover figcaption a { text-decoration: underline; text-underline-offset: 2px; }
+.cover img { height: 100%; }
 .article-cover .cover { aspect-ratio: 16 / 8.5; border-radius: 6px; }
 .article-body { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 64px; max-width: 1060px; margin: 0 auto; padding: 40px 24px 64px; }
 .prose { font-size: 20px; line-height: 1.65; max-width: 66ch; }

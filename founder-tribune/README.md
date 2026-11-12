@@ -8,7 +8,7 @@ Front page, section pages (`section.html?s=funding`), story pages (`article.html
 ## Editing content
 Everything lives in `assets/js/data.js`:
 - `articles`: add a story by copying an existing entry. In `body`, start a line with `## ` for a subheading and `> ` for a pull quote.
-- `image: 'assets/img/photo.jpg'` on a story replaces the generated cover with a real photo.
+- Each story has `image`, `alt` and `credit` fields. Photos are from Unsplash and listed in `CREDITS.md`. Remove `image` to fall back to a generated cover.
 - `wire`: the funding rounds shown in the ticker and table.
 - `sections`, `authors`: names, colours and bios.
 - `config`: email addresses, social links and form endpoints.
