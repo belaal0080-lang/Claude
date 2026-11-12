@@ -25,6 +25,7 @@ window.FT = {
     priya:  { name: 'Priya Nair',    role: 'Technology editor',     bio: 'Priya reports on the software and infrastructure that startups are built on.' },
     tom:    { name: 'Tom Whitfield', role: 'Leadership columnist',  bio: 'Tom spent twelve years as an operator before writing about management.' },
     lena:   { name: 'Lena Fischer',  role: 'Money and life writer', bio: 'Lena writes about founder finances and the cost of building a company.' },
+    desk:   { name: 'Tribune News Desk', role: 'Staff report',          bio: 'News desk stories are compiled from the published sources listed with each story and checked by an editor.' },
     omar:   { name: 'Omar Haddad',   role: 'Staff writer',          bio: 'Omar profiles first-time founders outside the usual startup capitals.' }
   },
   wire: [

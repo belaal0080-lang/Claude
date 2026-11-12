@@ -7,10 +7,11 @@
   let params = new URLSearchParams(location.search), onScroll = null;
   const qs = k => params.get(k) || '';
   const sec = id => D.sections.find(s => s.id === id) || D.sections[0];
-  const author = id => D.authors[id];
+  const author = id => D.authors[id] || D.authors.desk || { name: C.name, role: '', bio: '' };
   const initials = n => n.split(' ').map(w => w[0]).slice(0, 2).join('');
   const fmt = (d, o) => new Date(d + 'T12:00:00').toLocaleDateString('en-US', o || { month: 'short', day: 'numeric', year: 'numeric' });
-  const byDate = D.articles.slice().sort((a, b) => b.date.localeCompare(a.date));
+  let byDate = [];
+  const sortStories = () => { byDate = D.articles.slice().sort((a, b) => b.date.localeCompare(a.date)); };
   const url = a => 'article.html?s=' + a.slug;
   const secUrl = id => 'section.html?s=' + id;
 
@@ -105,17 +106,18 @@
     home() {
       const used = new Set(), take = (list, n) => { const out = list.filter(a => !used.has(a.slug)).slice(0, n); out.forEach(a => used.add(a.slug)); return out; };
       const feat = byDate.filter(a => a.featured && !a.interview);
-      const [top] = take(feat, 1);
-      const interview = byDate.find(a => a.interview); used.add(interview.slug);
+      const [top] = take(feat.length ? feat : byDate, 1);
+      if (!top) { $('#main').innerHTML = `<div class="notfound"><h1>No stories yet</h1><p>The first stories will appear here as soon as they are published.</p></div>`; return; }
+      const interview = byDate.find(a => a.interview && a.quote); if (interview) used.add(interview.slug);
       const side = take(byDate.filter(a => a.section !== 'opinion'), 3);
-      const mostRead = ['founder-salary-what-to-pay-yourself', 'four-day-week-18-months', 'stop-calling-it-a-pivot', 'kitchen-table-to-40-stores', 'firing-a-co-founder'].map(s => D.articles.find(a => a.slug === s));
+      const mostRead = ['founder-salary-what-to-pay-yourself', 'four-day-week-18-months', 'stop-calling-it-a-pivot', 'kitchen-table-to-40-stores', 'firing-a-co-founder'].map(s => D.articles.find(a => a.slug === s)).filter(Boolean).concat(byDate).filter((a, i, l) => l.indexOf(a) === i).slice(0, 5);
       const inSec = (id, n) => { const all = byDate.filter(a => a.section === id), fresh = take(all, n); return fresh.concat(all.filter(a => !fresh.includes(a) && a !== top && a !== interview)).slice(0, n); };
       const head = s => `<div class="block-head"><h2>${s.name}</h2><a class="more" href="${secUrl(s.id)}">All ${s.name.toLowerCase()} stories</a></div>`;
       const block = (id, body) => { const s = sec(id); return `<section class="block" style="--sec:${s.color}"><div class="wrap">${head(s)}${body}</div></section>`; };
       const ticker = D.wire.map(w => `<span class="ticker-item"><b>${esc(w.co)}</b><span class="amt">${esc(w.amt)}</span><span class="rnd">${esc(w.round)}, ${esc(w.sector.toLowerCase())}</span></span>`).join('');
 
       const st = inSec('startups', 3), fu = inSec('funding', 2), le = inSec('leadership', 3), te = inSec('technology', 3), mo = inSec('money', 2), li = inSec('lifestyle', 2);
-      const ia = author(interview.author), subject = 'Rosa Delgado, founder of Kiln & Co';
+      const ia = interview && author(interview.author), subject = 'Rosa Delgado, founder of Kiln & Co';
       $('#main').innerHTML = `
       <div class="ticker"><div class="wrap"><a class="ticker-label" href="${secUrl('funding')}">Funding wire</a>
         <div class="ticker-view" tabindex="0" aria-label="Latest funding rounds"><div class="ticker-track">${ticker}${ticker}</div></div></div></div>
@@ -125,10 +127,10 @@
         <aside class="top-rail"><h2 class="rail-title">Most read this week</h2>${ranked(mostRead)}</aside>
       </div></div></section>
       ${block('startups', `<div class="split"><div>${card(st[0])}</div><div>${st.slice(1).map(row).join('')}</div></div>`)}
-      <section class="interview"><div class="wrap">
+      ${interview ? `<section class="interview"><div class="wrap">
         <div><p class="interview-label">The Founder Interview</p><blockquote>${esc(interview.quote)}</blockquote>
           <cite><b>${esc(subject)}</b><br>Interview by ${esc(ia.name)}</cite><a class="btn btn-gold" href="${url(interview)}">Read the interview</a></div>
-        <a href="${url(interview)}" aria-hidden="true" tabindex="-1">${cover(interview)}</a></div></section>
+        <a href="${url(interview)}" aria-hidden="true" tabindex="-1">${cover(interview)}</a></div></section>` : ''}
       ${block('funding', `<div class="split"><div class="grid-2">${fu.map(a => card(a)).join('')}</div><div>${wireTable(5)}</div></div>`)}
       ${block('leadership', `<div class="grid-3">${le.map(a => card(a)).join('')}</div>`)}
       <section class="block" style="--sec:${sec('opinion').color}"><div class="wrap">${head(sec('opinion'))}
@@ -173,6 +175,7 @@
         <div class="article-body">
           <div>${a.takeaways ? `<section class="takeaways"><h2>Key points</h2><ul>${a.takeaways.map(x => `<li>${esc(x)}</li>`).join('')}</ul></section>` : ''}
             <div class="prose">${body}</div>
+            ${a.sources && a.sources.length ? `<section class="sources"><h2>Sources</h2><ul>${a.sources.map(x => `<li><a href="${esc(x.url)}" target="_blank" rel="noopener nofollow">${esc(x.title)}</a></li>`).join('')}</ul>${a.ai ? '<p>This story was drafted with AI assistance from the sources above and reviewed by an editor.</p>' : ''}</section>` : ''}
             <div class="author-box"><span class="avatar">${initials(au.name)}</span><div><b>${esc(au.name)}</b><span>${esc(au.role)}</span><p>${esc(au.bio)}</p></div></div></div>
           <aside class="aside"><div class="aside-card"><h2>Get the Morning Tribune</h2><p>Funding rounds and founder stories, every weekday by 7.</p>${newsletterForm('nl-side')}</div>
             <div><h2 class="rail-title">Most read this week</h2>${ranked(byDate.filter(x => x.slug !== a.slug).slice(2, 6))}</div></aside>
@@ -266,7 +269,24 @@
     const first = fromHash(); show(first.page ? first : { page: 'home' });
   }
 
+  /* When the site runs on its server, published stories come from the newsroom. Otherwise the bundled stories are used. */
+  async function loadLive() {
+    if (window.FT_PAGES || !/^https?:$/.test(location.protocol)) return;
+    try {
+      const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 3000);
+      const r = await fetch('api/content', { signal: ctl.signal }); clearTimeout(t);
+      if (!r.ok || !(r.headers.get('content-type') || '').includes('json')) return;
+      const live = await r.json();
+      if (Array.isArray(live.articles)) D.articles = live.articles;
+      if (Array.isArray(live.wire)) D.wire = live.wire;
+      if (live.authors) D.authors = live.authors;
+    } catch (_) { /* static hosting: keep the bundled stories */ }
+  }
+
   chrome(); forms();
-  if (window.FT_PAGES) return spa(window.FT_PAGES);
-  const p = document.body.dataset.page; if (pages[p]) pages[p]();
+  loadLive().then(() => {
+    sortStories();
+    if (window.FT_PAGES) return spa(window.FT_PAGES);
+    const p = document.body.dataset.page; if (pages[p]) pages[p]();
+  });
 })();

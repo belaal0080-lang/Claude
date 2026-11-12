@@ -1,0 +1,14 @@
+{
+  "name": "founder-tribune",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Founder Tribune publication site with admin panel and AI news desk",
+  "scripts": {
+    "start": "node server/server.js"
+  },
+  "engines": { "node": ">=20.12" },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.8.0"
+  }
+}

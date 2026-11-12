@@ -1,6 +1,34 @@
 # Founder Tribune
 
-Static publication website. Open `index.html` in a browser, or host the folder on any static host (Netlify, Vercel, GitHub Pages, cPanel).
+Publication website with a hidden newsroom (admin panel) and an AI news desk.
+
+## Run it
+
+```
+npm install
+cp .env.example .env     # then edit .env
+npm start
+```
+
+On first start the server prints the site address, the secret admin address and, if you did not set one, a generated admin password (shown once).
+It needs Node 20.12 or newer and a host that runs Node (Render, Railway, Fly.io, a VPS). Plain static hosts cannot run the admin panel;
+without the server the site still works and shows the bundled sample stories.
+
+## Newsroom (admin panel)
+
+- Lives at `https://your-site/<ADMIN_PATH>`. Nothing on the public site links to it, and every other address returns "not found".
+- Write, edit, publish, unpublish and delete stories in any section; upload a photo per story (JPG, PNG, WebP, up to 8 MB).
+- Stories are kept in `server/data/store.json` and uploads in `server/data/uploads/`. Back up `server/data/`; use a persistent disk on your host.
+- Always serve the site over HTTPS so the password and session cookie are encrypted.
+
+## AI news desk (Claude)
+
+- Set `ANTHROPIC_API_KEY` in `.env`. In the newsroom, "Draft with Claude" searches recent news and writes a sourced draft.
+- Set `AI_DAILY_HOUR` (0-23) to have one draft written per section in `AI_DAILY_SECTIONS` every day.
+- Drafts are saved for review by default. `AI_AUTO_PUBLISH=true` publishes them unreviewed, which is not recommended:
+  AI drafts can contain errors, so check each one against its listed sources first.
+- AI stories carry the "Tribune News Desk" byline, list their sources and are labelled as AI-assisted.
+- Each draft uses the Claude API and web search, which are billed to your Anthropic account.
 
 ## Pages
 Front page, section pages (`section.html?s=funding`), story pages (`article.html?s=slug`), search, about, contact, pitch your story, advertise, privacy, terms, 404.
