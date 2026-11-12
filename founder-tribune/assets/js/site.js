@@ -4,7 +4,8 @@
   const D = window.FT, C = D.config;
   const $ = (s, r) => (r || document).querySelector(s);
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const qs = k => new URLSearchParams(location.search).get(k) || '';
+  let params = new URLSearchParams(location.search), onScroll = null;
+  const qs = k => params.get(k) || '';
   const sec = id => D.sections.find(s => s.id === id) || D.sections[0];
   const author = id => D.authors[id];
   const initials = n => n.split(' ').map(w => w[0]).slice(0, 2).join('');
@@ -179,7 +180,7 @@
       </article>
       <section class="block"><div class="wrap"><div class="block-head"><h2>Keep reading</h2></div><div class="grid-3">${related.map(x => card(x)).join('')}</div></div></section>`;
       const bar = $('#progress'), art = $('.prose');
-      const onScroll = () => { const r = art.getBoundingClientRect(); const p = Math.min(1, Math.max(0, (innerHeight * .5 - r.top) / r.height)); bar.style.width = (p * 100) + '%'; };
+      removeEventListener('scroll', onScroll); onScroll = () => { const r = art.getBoundingClientRect(); const p = Math.min(1, Math.max(0, (innerHeight * .5 - r.top) / r.height)); bar.style.width = (p * 100) + '%'; };
       addEventListener('scroll', onScroll, { passive: true }); onScroll();
       $('#copy').addEventListener('click', e => { const done = () => { e.target.textContent = 'Link copied'; setTimeout(() => e.target.textContent = 'Copy link', 2000); }; navigator.clipboard ? navigator.clipboard.writeText(location.href).then(done, done) : done(); });
       const ld = { '@context': 'https://schema.org', '@type': 'NewsArticle', headline: a.title, description: a.dek, datePublished: a.date, articleSection: s.name, author: { '@type': 'Person', name: au.name }, publisher: { '@type': 'Organization', name: C.name } };
@@ -235,6 +236,37 @@
     });
   }
 
+  /* ---------- Single-file preview mode: every page in one document, routed on the URL hash ---------- */
+  function spa(templates) {
+    const toHash = href => {
+      const m = /^([\w-]+)\.html(?:\?([^#]*))?(?:#(.*))?$/.exec(href); if (!m) return null;
+      const q = new URLSearchParams(m[2] || ''), page = m[1] === 'index' ? 'home' : m[1];
+      return { page, s: q.get('s') || '', q: q.get('q') || '', anchor: m[3] || '' };
+    };
+    const hashOf = r => r.page === 'home' ? '#home' : r.page === 'article' ? '#story-' + r.s : r.page === 'section' ? '#section-' + r.s : '#' + r.page;
+    const fromHash = () => { const h = location.hash.slice(1);
+      if (h.startsWith('story-')) return { page: 'article', s: h.slice(6) };
+      if (h.startsWith('section-')) return { page: 'section', s: h.slice(8) };
+      return { page: h && (pages[h] || templates[h]) ? h : (h ? null : 'home') }; };
+    let pending = null;
+    function show(r) {
+      params = new URLSearchParams({ s: r.s || '', q: r.q || '' });
+      document.body.dataset.page = r.page; document.body.style.removeProperty('--sec');
+      document.title = C.name; $('#main').innerHTML = templates[r.page] || '';
+      (pages[r.page] || (templates[r.page] ? () => {} : pages.missing))();
+      const h1 = $('#main h1'); if (h1 && r.page !== 'home' && r.page !== 'article' && r.page !== 'section') document.title = h1.textContent + ' | ' + C.name;
+      document.querySelectorAll('.nav a').forEach(a => { const t = toHash(a.getAttribute('href')); const on = t && t.page === r.page && (t.s || '') === (r.page === 'section' ? r.s : ''); on ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'); });
+      const target = r.anchor && document.getElementById(r.anchor);
+      target ? target.scrollIntoView() : scrollTo(0, 0);
+    }
+    function go(r) { pending = r; const h = hashOf(r); if (location.hash === h) { pending = null; show(r); } else location.hash = h; }
+    addEventListener('hashchange', () => { const r = pending || fromHash(); pending = null; if (!r.page) { const el = document.getElementById(location.hash.slice(1)); if (el) return el.scrollIntoView(); } show(r.page ? r : { page: 'missing' }); });
+    document.addEventListener('click', e => { const a = e.target.closest('a[href]'); if (!a || a.target === '_blank') return; const r = toHash(a.getAttribute('href')); if (r) { e.preventDefault(); go(r); } });
+    document.addEventListener('submit', e => { const f = e.target.closest('form[action="search.html"]'); if (!f) return; e.preventDefault(); go({ page: 'search', q: new FormData(f).get('q') || '' }); });
+    const first = fromHash(); show(first.page ? first : { page: 'home' });
+  }
+
   chrome(); forms();
+  if (window.FT_PAGES) return spa(window.FT_PAGES);
   const p = document.body.dataset.page; if (pages[p]) pages[p]();
 })();
