@@ -26,3 +26,14 @@ need their own scripts, so they ship as plugins through the local marketplace in
 
 Note: claude-seo adds a PostToolUse hook that validates JSON-LD schema after Edit/Write.
 Some scripts need Python packages from each plugin's `requirements.txt`.
+
+## Free images (stock photos and AI generation)
+
+| Skill | What it does | Keys needed | Source |
+|---|---|---|---|
+| fetch-media | Search and download from Wikimedia Commons, NASA, NIH BioArt, MedlinePlus, Unsplash, Pixabay, Pexels, with citations | None for Wikimedia, NASA, BioArt; free keys for Unsplash, Pixabay, Pexels | TriasJ/fetch-media |
+| photo-forager | Stock photos that need no attribution (Wikimedia CC0, Rawpixel CC0, Pexels, Unsplash labelled); writes a credits file | None for Wikimedia and Rawpixel; free keys for Pexels, Unsplash | fiehrfly/photo-forager |
+| stock-images | Search and download from Pexels, Unsplash, Pixabay | At least one free key (see its SETUP.md) | jeanpfs/stock-images |
+| zimage | AI image generation with Z-Image-Turbo | Free ModelScope API key (`MODELSCOPE_API_KEY`) | FuturizeRush/zimage-skill |
+
+Put API keys in each skill's `.env` (copy `.env.example`); `.env` files are gitignored. Never commit keys.
