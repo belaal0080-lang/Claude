@@ -170,6 +170,32 @@ async function adminApi(req, res, route) {
   return json(res, 404, { error: 'Not found.' });
 }
 
+/* ---------- Feeds and share tags ---------- */
+const xml = t => String(t ?? '').replace(/[<>&'"]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;' }[c]));
+const origin = req => process.env.SITE_URL?.replace(/\/$/, '') || `${req.headers['x-forwarded-proto'] || 'http'}://${req.headers.host}`;
+const published = () => store.articles.filter(a => a.status === 'published').sort((a, b) => b.date.localeCompare(a.date));
+function rss(req) {
+  const o = origin(req);
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel><title>${xml(SITE.config.name)}</title><link>${o}/</link><description>${xml(SITE.config.tagline)}</description><language>en</language>` +
+    published().slice(0, 40).map(a => `<item><title>${xml(a.title)}</title><link>${o}/article.html?s=${a.slug}</link><guid isPermaLink="false">${a.slug}</guid><pubDate>${new Date(a.date + 'T12:00:00Z').toUTCString()}</pubDate><category>${xml(SITE.sections.find(x => x.id === a.section)?.name)}</category><description>${xml(a.dek)}</description></item>`).join('') + '</channel></rss>';
+}
+function sitemap(req) {
+  const o = origin(req), pages = ['', 'about.html', 'contact.html', 'pitch.html', 'advertise.html', 'newsletters.html', 'editorial-standards.html', 'corrections.html', 'privacy.html', 'terms.html', 'cookies.html', 'accessibility.html', 'site-index.html'];
+  const u = (loc, mod) => `<url><loc>${xml(loc)}</loc>${mod ? `<lastmod>${mod}</lastmod>` : ''}</url>`;
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">` + pages.map(p => u(`${o}/${p}`)).join('') + SITE.sections.map(x => u(`${o}/section.html?s=${x.id}`)).join('') +
+    Object.keys(SITE.authors).map(k => u(`${o}/author.html?a=${k}`)).join('') + published().map(a => u(`${o}/article.html?s=${a.slug}`, a.date)).join('') + '</urlset>';
+}
+// Story pages get their real title, summary and photo in the HTML so links preview properly when shared.
+function storyHtml(req, slug) {
+  let html = fs.readFileSync(path.join(ROOT, 'article.html'), 'utf8');
+  const a = store.articles.find(x => x.slug === slug && x.status === 'published'); if (!a) return html;
+  const o = origin(req), t = xml(`${a.title} | ${SITE.config.name}`), d = xml(a.dek);
+  html = html.replace(/<title>.*?<\/title>/s, () => `<title>${t}</title>`).replace(/<meta name="description" content=".*?">/, () => `<meta name="description" content="${d}">`)
+    .replace(/<meta property="og:title" content=".*?">/, () => `<meta property="og:title" content="${xml(a.title)}">`).replace(/<meta property="og:description" content=".*?">/, () => `<meta property="og:description" content="${d}">`)
+    .replace('<meta property="og:type" content="website">', () => `<meta property="og:type" content="article">\n<meta property="og:url" content="${o}/article.html?s=${a.slug}">\n<link rel="canonical" href="${o}/article.html?s=${a.slug}">${a.image ? `\n<meta property="og:image" content="${o}/${xml(a.image)}">` : ''}`);
+  return html;
+}
+
 /* ---------- HTTP ---------- */
 const server = http.createServer(async (req, res) => {
   try {
@@ -181,7 +207,10 @@ const server = http.createServer(async (req, res) => {
     if (p.startsWith('/' + ADMIN_PATH + '/api/')) return await adminApi(req, res, p.slice(ADMIN_PATH.length + 6));
     if (req.method !== 'GET' && req.method !== 'HEAD') return send(res, 405, 'Method not allowed');
     if (p === '/api/content') return json(res, 200, { articles: store.articles.filter(a => a.status === 'published').map(publicArticle), wire: store.wire, authors: SITE.authors }, { 'Cache-Control': 'public, max-age=30' });
-    if (p === '/robots.txt') return send(res, 200, 'User-agent: *\nAllow: /\n', { 'Content-Type': 'text/plain' });
+    if (p === '/robots.txt') return send(res, 200, `User-agent: *\nAllow: /\nSitemap: ${origin(req)}/sitemap.xml\n`, { 'Content-Type': 'text/plain' });
+    if (p === '/rss.xml') return send(res, 200, rss(req), { 'Content-Type': 'application/rss+xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' });
+    if (p === '/sitemap.xml') return send(res, 200, sitemap(req), { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' });
+    if (p === '/article.html' && u.searchParams.get('s')) return send(res, 200, storyHtml(req, u.searchParams.get('s')), { 'Content-Type': TYPES['.html'], 'Cache-Control': 'no-cache' });
     if (p === '/') p = '/index.html';
     if (p.includes('..') || p.includes('\0') || /(^|\/)\./.test(p)) return notFound(res);
     if (p.startsWith('/uploads/') && /^\/uploads\/[a-f0-9]+\.(jpg|png|webp)$/.test(p)) return serveFile(res, path.join(UPLOADS, p.slice(9)), 'public, max-age=31536000, immutable');

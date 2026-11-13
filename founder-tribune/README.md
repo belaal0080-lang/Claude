@@ -31,7 +31,17 @@ without the server the site still works and shows the bundled sample stories.
 - Each draft uses the Claude API and web search, which are billed to your Anthropic account.
 
 ## Pages
-Front page, section pages (`section.html?s=funding`), story pages (`article.html?s=slug`), search, about, contact, pitch your story, advertise, privacy, terms, 404.
+Front page, 11 section pages (`section.html?s=news`), story pages (`article.html?s=slug`), writer pages (`author.html?a=id`), search,
+about, contact, pitch your story, advertise, newsletters, editorial standards, corrections, privacy policy, terms and conditions,
+cookie policy, accessibility, site index and 404. The server also provides `/rss.xml`, `/sitemap.xml` and `/robots.txt`.
+
+## Fill these in before launch
+`config` in `assets/js/data.js` and the policy pages contain three highlighted placeholders: the company's legal name, its registered
+address, and the state or country whose law governs the terms. Search the `.html` files for `class="fill"` to find every one.
+Have a lawyer review the privacy policy, terms and cookie policy for the places you operate in.
+The cookie banner records the reader's choice in `FT.consent` (`all` or `essential`); load any analytics or ad scripts only when it is `all`.
+`config.breaking` controls the red "Just in" bar on the front page (set it to `null` to hide it).
+After editing any static page, run the page build again so `preview.html` stays in step (see `assets/js/pages.js`).
 
 ## Editing content
 Everything lives in `assets/js/data.js`:

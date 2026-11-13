@@ -71,7 +71,7 @@
     const cur = qs('s'), page = document.body.dataset.page;
     const header = `<a class="skip" href="#main">Skip to content</a>
     <div class="util"><div class="wrap"><span class="util-date">${new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</span>
-      <span class="util-links"><a href="pitch.html">Pitch your story</a><a href="advertise.html">Advertise</a><a href="about.html">About</a></span></div></div>
+      <span class="util-links"><a href="newsletters.html">Newsletters</a><a href="pitch.html">Pitch your story</a><a href="advertise.html">Advertise</a><a href="about.html">About</a></span></div></div>
     <header class="mast"><div class="wrap">
       <a class="nameplate" href="index.html" aria-label="${C.name}, home">${mark}<span>${C.name}</span></a>
       <div class="mast-actions">
@@ -89,13 +89,13 @@
       <div>${newsletterForm('nl-foot')}</div></div></section>
     <footer class="foot"><div class="wrap">
       <div class="foot-grid">
-        <div><a class="nameplate" href="index.html">${mark}<span>${C.name}</span></a><p class="foot-about">${C.tagline}. Independent reporting for people who start and run companies.</p></div>
-        <div><h4>Sections</h4><ul>${D.sections.map(s => `<li><a href="${secUrl(s.id)}">${s.name}</a></li>`).join('')}</ul></div>
-        <div><h4>Company</h4><ul><li><a href="about.html">About us</a></li><li><a href="contact.html">Contact</a></li><li><a href="pitch.html">Pitch your story</a></li><li><a href="advertise.html">Advertise</a></li><li><a href="about.html#standards">Editorial standards</a></li></ul></div>
-        <div><h4>Legal</h4><ul><li><a href="privacy.html">Privacy policy</a></li><li><a href="terms.html">Terms of use</a></li><li><a href="privacy.html#cookies">Cookies</a></li><li><a href="about.html#corrections">Corrections</a></li></ul></div>
+        <div><a class="nameplate" href="index.html">${mark}<span>${C.name}</span></a><p class="foot-about">${C.tagline}. Independent reporting for people who start and run companies.</p>
+          <p class="foot-social">${Object.entries(C.social).map(([k, v]) => `<a href="${v}" rel="noopener">${k}</a>`).join('')}<a href="rss.xml">RSS</a></p></div>
+        <div><h4>Sections</h4><ul class="two">${D.sections.map(s => `<li><a href="${secUrl(s.id)}">${s.name}</a></li>`).join('')}</ul></div>
+        <div><h4>About</h4><ul><li><a href="about.html">About us</a></li><li><a href="editorial-standards.html">Editorial standards</a></li><li><a href="corrections.html">Corrections</a></li><li><a href="contact.html">Contact</a></li><li><a href="pitch.html">Pitch your story</a></li><li><a href="advertise.html">Advertise</a></li><li><a href="newsletters.html">Newsletters</a></li></ul></div>
+        <div><h4>Legal</h4><ul><li><a href="privacy.html">Privacy policy</a></li><li><a href="terms.html">Terms and conditions</a></li><li><a href="cookies.html">Cookie policy</a></li><li><button type="button" class="linkish" data-cookie-open>Cookie settings</button></li><li><a href="privacy.html#your-choices">Do not sell or share my information</a></li><li><a href="accessibility.html">Accessibility</a></li><li><a href="site-index.html">Site index</a></li></ul></div>
       </div>
-      <div class="foot-bottom"><span>© ${new Date().getFullYear()} ${C.name}. All rights reserved.</span>
-        <span class="foot-social">${Object.entries(C.social).map(([k, v]) => `<a href="${v}" rel="noopener">${k}</a>`).join('')}</span></div>
+      <div class="foot-bottom"><span>© ${new Date().getFullYear()} ${C.name}. All rights reserved.</span><span>Use of this site means you accept our <a href="terms.html">terms</a> and <a href="privacy.html">privacy policy</a>.</span></div>
     </div></footer>`;
     document.body.insertAdjacentHTML('afterbegin', header);
     document.body.insertAdjacentHTML('beforeend', footer);
@@ -116,9 +116,14 @@
       const block = (id, body) => { const s = sec(id); return `<section class="block" style="--sec:${s.color}"><div class="wrap">${head(s)}${body}</div></section>`; };
       const ticker = D.wire.map(w => `<span class="ticker-item"><b>${esc(w.co)}</b><span class="amt">${esc(w.amt)}</span><span class="rnd">${esc(w.round)}, ${esc(w.sector.toLowerCase())}</span></span>`).join('');
 
-      const st = inSec('startups', 3), fu = inSec('funding', 2), le = inSec('leadership', 3), te = inSec('technology', 3), mo = inSec('money', 2), li = inSec('lifestyle', 2);
+      const ne = inSec('news', 4), st = inSec('startups', 3), fu = inSec('funding', 2), le = inSec('leadership', 3), te = inSec('technology', 3), mo = inSec('money', 2), li = inSec('lifestyle', 2);
+      const blockIf = (id, list, fn) => list.length ? block(id, fn(list)) : '';
+      const column = id => { const l = inSec(id, 3), sc = sec(id); return l.length ? `<div class="tri-col" style="--sec:${sc.color}"><div class="block-head"><h2>${sc.name}</h2><a class="more" href="${secUrl(id)}">More</a></div>${card(l[0], false)}${l.slice(1).map(text).join('')}</div>` : ''; };
+      const tri = ['health', 'entertainment', 'sports'].map(column).join('');
+      const brk = C.breaking && D.articles.find(a => a.slug === C.breaking.slug);
       const ia = interview && author(interview.author), subject = 'Rosa Delgado, founder of Kiln & Co';
       $('#main').innerHTML = `
+      ${brk ? `<a class="breaking" href="${url(brk)}"><span class="wrap"><b>Just in</b><span>${esc(C.breaking.text || brk.title)}</span></span></a>` : ''}
       <div class="ticker"><div class="wrap"><a class="ticker-label" href="${secUrl('funding')}">Funding wire</a>
         <div class="ticker-view" tabindex="0" aria-label="Latest funding rounds"><div class="ticker-track">${ticker}${ticker}</div></div></div></div>
       <section class="top"><div class="wrap"><h1 class="sr">${C.name}: today's top stories</h1><div class="top-grid">
@@ -126,18 +131,20 @@
         <div>${side.map(row).join('')}</div>
         <aside class="top-rail"><h2 class="rail-title">Most read this week</h2>${ranked(mostRead)}</aside>
       </div></div></section>
-      ${block('startups', `<div class="split"><div>${card(st[0])}</div><div>${st.slice(1).map(row).join('')}</div></div>`)}
+      ${blockIf('news', ne, l => `<div class="${l.length === 4 ? 'grid-4' : 'grid-3'}">${l.map(a => card(a, l.length !== 4)).join('')}</div>`)}
+      ${blockIf('startups', st, l => `<div class="split"><div>${card(l[0])}</div><div>${l.slice(1).map(row).join('')}</div></div>`)}
       ${interview ? `<section class="interview"><div class="wrap">
         <div><p class="interview-label">The Founder Interview</p><blockquote>${esc(interview.quote)}</blockquote>
           <cite><b>${esc(subject)}</b><br>Interview by ${esc(ia.name)}</cite><a class="btn btn-gold" href="${url(interview)}">Read the interview</a></div>
         <a href="${url(interview)}" aria-hidden="true" tabindex="-1">${cover(interview)}</a></div></section>` : ''}
-      ${block('funding', `<div class="split"><div class="grid-2">${fu.map(a => card(a)).join('')}</div><div>${wireTable(5)}</div></div>`)}
-      ${block('leadership', `<div class="grid-3">${le.map(a => card(a)).join('')}</div>`)}
+      ${blockIf('funding', fu, l => `<div class="split"><div class="grid-2">${l.map(a => card(a)).join('')}</div><div>${wireTable(5)}</div></div>`)}
+      ${blockIf('leadership', le, l => `<div class="grid-3">${l.map(a => card(a)).join('')}</div>`)}
       <section class="block" style="--sec:${sec('opinion').color}"><div class="wrap">${head(sec('opinion'))}
         <div class="opinion-list">${byDate.filter(a => a.section === 'opinion').slice(0, 3).map(a => { const au = author(a.author); return `<a class="story op" href="${url(a)}" style="--sec:var(--green)"><span class="avatar">${initials(au.name)}</span><span><span class="who">${esc(au.name)}</span><h3>${esc(a.title)}</h3></span></a>`; }).join('')}</div></div></section>
-      ${block('technology', `<div class="split"><div>${card(te[0])}</div><div>${te.slice(1).map(row).join('')}</div></div>`)}
-      <section class="block"><div class="wrap"><div class="block-head"><h2 style="--sec:${sec('money').color}">Money and life</h2><a class="more" href="${secUrl('money')}" style="--sec:${sec('money').color}">All money stories</a></div>
-        <div class="grid-4">${mo.concat(li).map(a => card(a, false)).join('')}</div></div></section>
+      ${blockIf('technology', te, l => `<div class="split"><div>${card(l[0])}</div><div>${l.slice(1).map(row).join('')}</div></div>`)}
+      ${tri ? `<section class="block"><div class="wrap tri">${tri}</div></section>` : ''}
+      ${mo.concat(li).length ? `<section class="block"><div class="wrap"><div class="block-head"><h2 style="--sec:${sec('money').color}">Money and life</h2><a class="more" href="${secUrl('money')}" style="--sec:${sec('money').color}">All money stories</a></div>
+        <div class="grid-4">${mo.concat(li).map(a => card(a, false)).join('')}</div></div></section>` : ''}
       <section class="pitch-band"><div class="wrap"><div><h2>Building something worth writing about?</h2><p>Our reporters read every pitch. Tell us what you have built, what is new and why it matters to other founders.</p></div><a class="btn" href="pitch.html">Pitch your story</a></div></section>`;
     },
 
@@ -168,7 +175,7 @@
         <header class="article-head"><div class="wrap">
           <a class="kicker" href="${secUrl(s.id)}">${s.name}</a>
           <h1>${esc(a.title)}</h1><p class="dek">${esc(a.dek)}</p>
-          <div class="byline"><div class="byline-who"><span class="avatar">${initials(au.name)}</span><span><b>${esc(au.name)}</b><span>${esc(au.role)}, ${fmt(a.date, { month: 'long', day: 'numeric', year: 'numeric' })}, ${a.read} min read</span></span></div>
+          <div class="byline"><div class="byline-who"><span class="avatar">${initials(au.name)}</span><span><b><a href="author.html?a=${esc(a.author)}">${esc(au.name)}</a></b><span>${esc(au.role)}, ${fmt(a.date, { month: 'long', day: 'numeric', year: 'numeric' })}, ${a.read} min read</span></span></div>
             <div class="share"><span>Share</span><a href="https://www.linkedin.com/sharing/share-offsite/?url=${here}" target="_blank" rel="noopener">LinkedIn</a><a href="https://twitter.com/intent/tweet?url=${here}&text=${t}" target="_blank" rel="noopener">X</a><a href="mailto:?subject=${t}&body=${here}">Email</a><button type="button" id="copy">Copy link</button></div></div>
         </div></header>
         <figure class="article-cover"><div class="wrap">${cover(a)}${a.credit ? `<figcaption>${esc(a.alt || '')}. Photo by <a href="${esc(a.credit.url)}" target="_blank" rel="noopener">${esc(a.credit.name)}</a> on <a href="https://unsplash.com/?utm_source=founder_tribune&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a></figcaption>` : ''}</div></figure>
@@ -176,7 +183,8 @@
           <div>${a.takeaways ? `<section class="takeaways"><h2>Key points</h2><ul>${a.takeaways.map(x => `<li>${esc(x)}</li>`).join('')}</ul></section>` : ''}
             <div class="prose">${body}</div>
             ${a.sources && a.sources.length ? `<section class="sources"><h2>Sources</h2><ul>${a.sources.map(x => `<li><a href="${esc(x.url)}" target="_blank" rel="noopener nofollow">${esc(x.title)}</a></li>`).join('')}</ul>${a.ai ? '<p>This story was drafted with AI assistance from the sources above and reviewed by an editor.</p>' : ''}</section>` : ''}
-            <div class="author-box"><span class="avatar">${initials(au.name)}</span><div><b>${esc(au.name)}</b><span>${esc(au.role)}</span><p>${esc(au.bio)}</p></div></div></div>
+            <p class="report">Seen something wrong in this story? <a href="corrections.html">Tell us and we will check it</a>. We follow our <a href="editorial-standards.html">editorial standards</a>.</p>
+            <div class="author-box"><span class="avatar">${initials(au.name)}</span><div><b><a href="author.html?a=${esc(a.author)}">${esc(au.name)}</a></b><span>${esc(au.role)}</span><p>${esc(au.bio)}</p></div></div></div>
           <aside class="aside"><div class="aside-card"><h2>Get the Morning Tribune</h2><p>Funding rounds and founder stories, every weekday by 7.</p>${newsletterForm('nl-side')}</div>
             <div><h2 class="rail-title">Most read this week</h2>${ranked(byDate.filter(x => x.slug !== a.slug).slice(2, 6))}</div></aside>
         </div>
@@ -202,8 +210,26 @@
         : `<div class="empty"><h2>No stories match “${esc(q)}”</h2><p>Try a shorter search, a company name or a section such as funding or leadership.</p></div>`}</div></div>`;
     },
 
+    author() {
+      const id = qs('a'), au = D.authors[id];
+      if (!au) return pages.missing('We could not find that writer.');
+      document.title = `${au.name} | ${C.name}`; setMeta(au.bio);
+      const list = byDate.filter(a => a.author === id);
+      $('#main').innerHTML = `<header class="page-head plain"><div class="wrap author-head"><span class="avatar">${initials(au.name)}</span><div><h1>${esc(au.name)}</h1><p><b>${esc(au.role)}</b>. ${esc(au.bio)}</p></div></div></header>
+      <div class="listing"><div class="wrap">${list.length ? `<h2 class="rail-title">${list.length} ${list.length === 1 ? 'story' : 'stories'} by ${esc(au.name)}</h2><div class="grid-4">${list.map(a => card(a, false)).join('')}</div>` : `<div class="empty"><h2>No stories yet</h2><p>${esc(au.name)} has not published a story yet.</p></div>`}</div></div>`;
+    },
+
+    'site-index'() {
+      const el = $('#index'); if (!el) return;
+      el.innerHTML = `<div><h2>Sections</h2><ul>${D.sections.map(x => `<li><a href="${secUrl(x.id)}">${x.name}</a></li>`).join('')}</ul></div>
+      <div><h2>Writers</h2><ul>${Object.entries(D.authors).map(([k, v]) => `<li><a href="author.html?a=${k}">${esc(v.name)}</a></li>`).join('')}</ul></div>
+      <div><h2>About us</h2><ul><li><a href="about.html">About Founder Tribune</a></li><li><a href="editorial-standards.html">Editorial standards</a></li><li><a href="corrections.html">Corrections</a></li><li><a href="contact.html">Contact</a></li><li><a href="pitch.html">Pitch your story</a></li><li><a href="advertise.html">Advertise</a></li><li><a href="newsletters.html">Newsletters</a></li></ul></div>
+      <div><h2>Legal</h2><ul><li><a href="privacy.html">Privacy policy</a></li><li><a href="terms.html">Terms and conditions</a></li><li><a href="cookies.html">Cookie policy</a></li><li><a href="accessibility.html">Accessibility</a></li></ul></div>
+      <div class="wide"><h2>Latest stories</h2><ul>${byDate.slice(0, 30).map(a => `<li><a href="${url(a)}">${esc(a.title)}</a></li>`).join('')}</ul></div>`;
+    },
+
     about() {
-      const t = $('#team'); if (t) t.innerHTML = Object.values(D.authors).map(p => `<div class="person"><span class="avatar">${initials(p.name)}</span><b>${esc(p.name)}</b><span>${esc(p.role)}</span><p>${esc(p.bio)}</p></div>`).join('');
+      const t = $('#team'); if (t) t.innerHTML = Object.entries(D.authors).filter(([k]) => k !== 'desk').map(([k, p]) => `<div class="person"><span class="avatar">${initials(p.name)}</span><b><a href="author.html?a=${k}">${esc(p.name)}</a></b><span>${esc(p.role)}</span><p>${esc(p.bio)}</p></div>`).join('');
     },
 
     missing(msg) {
@@ -213,6 +239,23 @@
   };
 
   function setMeta(desc) { let m = $('meta[name="description"]'); if (!m) { m = document.createElement('meta'); m.name = 'description'; document.head.appendChild(m); } m.content = desc; }
+
+  /* ---------- Cookie choice and back-to-top ---------- */
+  function consent() {
+    const get = () => { try { return localStorage.getItem('ft-consent'); } catch (_) { return 'unavailable'; } };
+    const set = v => { try { localStorage.setItem('ft-consent', v); } catch (_) {} D.consent = v; document.dispatchEvent(new CustomEvent('ft:consent', { detail: v })); };
+    D.consent = get();   // 'all', 'essential' or null. Load analytics or ad scripts only when this is 'all'.
+    const open = () => {
+      if ($('.cookie')) return;
+      document.body.insertAdjacentHTML('beforeend', `<div class="cookie" role="dialog" aria-label="Cookie choices"><div class="wrap"><p><b>Your cookie choices.</b> We use essential cookies to run this site. With your permission we also use cookies to measure readership and improve our reporting. Read our <a href="cookies.html">cookie policy</a>.</p><div><button class="btn btn-sm" data-c="all">Accept all</button><button class="btn btn-line btn-sm" data-c="essential">Essential only</button></div></div></div>`);
+      $('.cookie').addEventListener('click', e => { const b = e.target.closest('[data-c]'); if (b) { set(b.dataset.c); $('.cookie').remove(); } });
+    };
+    if (!D.consent) open();
+    document.addEventListener('click', e => { if (e.target.closest('[data-cookie-open]')) open(); });
+    document.body.insertAdjacentHTML('beforeend', '<button class="totop" type="button" aria-label="Back to top" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>');
+    const top = $('.totop'); top.addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
+    addEventListener('scroll', () => { top.hidden = scrollY < 900; }, { passive: true });
+  }
 
   /* ---------- Forms ---------- */
   function forms() {
@@ -228,9 +271,9 @@
       if (endpoint) {
         try { const r = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ form: kind, ...data }) }); if (!r.ok) throw 0; }
         catch (_) { f.insertAdjacentHTML('afterbegin', `<p class="form-err" role="alert" style="flex-basis:100%">That did not send. Check your connection and try again, or email ${C.email}.</p>`); return; }
-        return ok(kind === 'newsletter' ? 'Subscribed. Your first Morning Tribune arrives on the next weekday.' : 'Sent. An editor will reply within five working days.');
+        return ok(kind === 'newsletter' ? 'Subscribed. Your first email arrives with the next edition.' : 'Sent. An editor will reply within five working days.');
       }
-      if (kind === 'newsletter') { try { localStorage.setItem('ft-newsletter', data.email); } catch (_) {} return ok('Subscribed. Your first Morning Tribune arrives on the next weekday.'); }
+      if (kind === 'newsletter') { try { localStorage.setItem('ft-newsletter', data.email); } catch (_) {} return ok('Subscribed. Your first email arrives with the next edition.'); }
       const to = kind === 'advertise' ? C.adsEmail : C.email;
       const subject = { pitch: 'Story pitch: ' + (data.company || data.name), contact: (data.topic || 'Message') + ' from ' + data.name, advertise: 'Advertising enquiry: ' + (data.company || data.name) }[kind] || 'Message';
       const bodyText = Object.entries(data).map(([k, v]) => k[0].toUpperCase() + k.slice(1) + ': ' + v).join('\n\n');
@@ -244,16 +287,17 @@
     const toHash = href => {
       const m = /^([\w-]+)\.html(?:\?([^#]*))?(?:#(.*))?$/.exec(href); if (!m) return null;
       const q = new URLSearchParams(m[2] || ''), page = m[1] === 'index' ? 'home' : m[1];
-      return { page, s: q.get('s') || '', q: q.get('q') || '', anchor: m[3] || '' };
+      return { page, s: q.get('s') || '', a: q.get('a') || '', q: q.get('q') || '', anchor: m[3] || '' };
     };
-    const hashOf = r => r.page === 'home' ? '#home' : r.page === 'article' ? '#story-' + r.s : r.page === 'section' ? '#section-' + r.s : '#' + r.page;
+    const hashOf = r => r.page === 'home' ? '#home' : r.page === 'article' ? '#story-' + r.s : r.page === 'section' ? '#section-' + r.s : r.page === 'author' ? '#author-' + r.a : '#' + r.page;
     const fromHash = () => { const h = location.hash.slice(1);
       if (h.startsWith('story-')) return { page: 'article', s: h.slice(6) };
       if (h.startsWith('section-')) return { page: 'section', s: h.slice(8) };
+      if (h.startsWith('author-')) return { page: 'author', a: h.slice(7) };
       return { page: h && (pages[h] || templates[h]) ? h : (h ? null : 'home') }; };
     let pending = null;
     function show(r) {
-      params = new URLSearchParams({ s: r.s || '', q: r.q || '' });
+      params = new URLSearchParams({ s: r.s || '', a: r.a || '', q: r.q || '' });
       document.body.dataset.page = r.page; document.body.style.removeProperty('--sec');
       document.title = C.name; $('#main').innerHTML = templates[r.page] || '';
       (pages[r.page] || (templates[r.page] ? () => {} : pages.missing))();
@@ -283,7 +327,7 @@
     } catch (_) { /* static hosting: keep the bundled stories */ }
   }
 
-  chrome(); forms();
+  chrome(); forms(); consent();
   loadLive().then(() => {
     sortStories();
     if (window.FT_PAGES) return spa(window.FT_PAGES);
