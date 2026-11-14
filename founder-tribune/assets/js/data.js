@@ -13,7 +13,7 @@ window.FT = {
     jurisdiction: '[State or country]',       // whose law governs the terms
     privacyEmail: 'privacy@foundertribune.com',
     correctionsEmail: 'corrections@foundertribune.com',
-    breaking: { text: 'Westbridge opens $20 million grant fund for small firms', slug: 'westbridge-small-business-grants' },  // set to null to hide the bar
+    breaking: { text: 'Flights resume after nationwide FAA ground stop; days of disruption expected', slug: 'faa-ground-stop-flights-resume' },  // set to null to hide the bar
     social: { LinkedIn: '#', X: '#', Instagram: '#', YouTube: '#' }
   },
   sections: [
@@ -609,6 +609,58 @@ window.FT = {
         "## Write it down",
         "The companies that do remote work well are not doing anything clever. They write decisions down, say who made them and put them where everyone can find them.",
         "That is harder than hiring an office. It is also what a well-run company should have been doing all along."
-      ] }
+      ] },
+
+    /* Real news stories, written with AI assistance from the listed sources on 14 November 2026. */
+    { slug: 'faa-ground-stop-flights-resume', section: 'news', author: 'desk', date: '2026-11-14', read: 4, featured: true, ai: true, reviewed: false,
+      title: "Flights resume after nationwide FAA ground stop, but disruption is expected to last days",
+      dek: "A communications outage halted departures across the United States for more than four hours on Friday. Thousands of flights were cancelled.",
+      body: [
+        "Flights across the United States resumed on Friday evening after the Federal Aviation Administration lifted a nationwide ground stop that had halted departures for more than four hours.",
+        "The stop was caused by a telecommunications outage affecting multiple air traffic control centers, according to CNN and NBC News. More than 3,500 aircraft were in the air when it was issued.",
+        "## The scale of the disruption",
+        "Flights began moving again at 8:15 p.m. on Friday, NBC News reported. By then the backlog was severe: more than 7,700 flights within, into or out of the United States were cancelled that day, according to FlightAware figures cited in news reports, and one report put the number of flights affected at more than 15,000.",
+        "Fox News described it as the longest nationwide ground stop in 25 years.",
+        "Some airports ran out of room. A source told NBC News that Reagan National Airport in Washington was at capacity and Chicago O’Hare was close to it, leaving arriving aircraft with nowhere to park. Passengers at Reagan National waited for hours before departures restarted, Fox News reported.",
+        "## What happens next",
+        "Federal officials warned that it will take time for airports and airlines to return to full capacity. The FAA said it was lifting restrictions gradually as its systems came back online. Delta said it had resumed all scheduled flights.",
+        "Reuters reported on Saturday that US air travel faces days of disruption as airlines work through the backlog.",
+        "Anyone travelling for work in the coming days should check their flight status with the airline before leaving for the airport, and expect rebooked flights to be full."
+      ],
+      takeaways: ["A telecommunications outage at air traffic control centers grounded US departures for more than four hours on Friday, November 13.", "More than 7,700 flights were cancelled that day, according to FlightAware figures cited in reports.", "Officials say it will take days for schedules to recover."],
+      sources: [{ title: "CNN: Some US flights resume after hours-long ground stop", url: "https://www.cnn.com/2026/11/13/us/live-news/flights-ground-stop-faa" }, { title: "NBC News: FAA lifts ground stop as U.S. airports grapple with thousands of canceled flights", url: "https://www.nbcnews.com/news/us-news/live-blog/live-updates-flights-grounded-faa-communications-outage-rcna609268" }, { title: "Fox News: Thousands of flights canceled in wake of FAA ground stop", url: "https://www.foxnews.com/live-news/thousands-of-flights-canceled-after-longest-nationwide-ground-stop-in-25-years-rocks-us-airports" }] },
+
+    { slug: 'cvs-glp1-break-even-350', section: 'health', author: 'desk', date: '2026-11-14', read: 4, ai: true, reviewed: false,
+      title: "CVS says weight-loss drugs would pay for themselves at under $350 a month",
+      dek: "An analysis of Aetna claims found employers saved on medical bills but spent more on prescriptions. Employers currently pay roughly twice the break-even price.",
+      body: [
+        "Employers and other health plan sponsors could break even on GLP-1 drugs if the monthly price fell below $350, CVS Health said in an analysis reported by Reuters on Saturday.",
+        "The finding matters to any company that pays for staff health cover. GLP-1 medicines, used for diabetes and weight loss, have become one of the fastest-growing costs in employer health plans.",
+        "## What the numbers show",
+        "CVS based the analysis on claims data from Aetna, the health insurer it owns. Over three years, plan sponsors saved about $9,400 per person on medical bills but spent about $13,300 more on prescriptions, a net added cost of roughly $3,900 per person.",
+        "At a price below $350 a month, CVS says, the savings would cover the cost of the drugs. That is well under what employers pay now. A 2025 study by the Employee Benefit Research Institute put the figure at $617 to $766 a month.",
+        "## The caveats",
+        "The break-even point depends on how sick the patient is. CVS suggests that plans see savings sooner for higher-risk patients. The report did not break out figures for people taking the drugs for obesity alone.",
+        "CVS is also not a neutral party. As well as Aetna, it owns Caremark, a pharmacy benefit manager that negotiates drug prices with manufacturers, so it has a commercial interest in lower list prices.",
+        "The company’s chief medical officer argued that the prices drugmakers already offer directly to consumers suggest they could still make a profit below $350 a month, according to the Reuters report.",
+        "This article is general information and not medical or financial advice."
+      ],
+      takeaways: ["CVS says employer health plans would break even on GLP-1 drugs priced under $350 a month.", "Over three years, plans saved about $9,400 per person on medical bills and spent about $13,300 more on prescriptions.", "Employers currently pay $617 to $766 a month, according to a 2025 study."],
+      sources: [{ title: "Reuters, via Investing.com: CVS says GLP-1s save money when priced below $350 per month", url: "https://www.investing.com/news/stock-market-news/cvs-says-glp1s-save-money-when-priced-below-350-per-month-5027293" }, { title: "Reuters, via AOL: CVS says GLP-1s save money when priced below $350 per month", url: "https://www.aol.com/articles/cvs-says-glp-1s-save-110514000.html" }, { title: "Traders Union: CVS Health says lower GLP-1 pricing could improve employer health plan costs", url: "https://tradersunion.com/news/companies/show/4243144-cvs-glp1-pricing-employer-costs/" }] },
+
+    { slug: 'ss-united-states-artificial-reef', section: 'lifestyle', author: 'desk', date: '2026-11-14', read: 4, ai: true, reviewed: false,
+      title: "The SS United States sinks off Florida to become the world’s largest artificial reef",
+      dek: "A county bought the record-setting ocean liner and spent about $13 million sinking it for divers and anglers. It is a bet on tourism.",
+      body: [
+        "The SS United States, the ocean liner that set the transatlantic speed record on its maiden voyage in 1952, was deliberately sunk off the Florida Panhandle on November 11 to become the world’s largest artificial reef.",
+        "The ship went down in a controlled sinking that used no explosives, about 20 nautical miles off the Gulf Coast near Destin, CBS News reported. After hours of slow descent it disappeared beneath the surface at 10 p.m., according to NPR.",
+        "## A county’s tourism investment",
+        "Okaloosa County bought the liner in 2024 after it had spent decades laid up in Philadelphia. The project was paid for with the county’s tourist tax revenue. Reports put the cost at about $13 million; CBS News cites that figure and the trade publication Marine Insight gives $13.5 million.",
+        "The county’s aim is to draw scuba divers and anglers, and the visitors who come with them. The wreck is also expected to provide habitat for large open-water fish.",
+        "## A new record",
+        "The ship, about 1,000 feet long, now rests on a seabed roughly 180 feet deep, Marine Insight reported. It takes the title of largest artificial reef from the aircraft carrier USS Oriskany, which was sunk off Pensacola in 2006.",
+        "The SS United States Conservancy, which campaigned for years to preserve the ship, is planning a museum in its honour in Florida."
+      ],
+      sources: [{ title: "CBS News: SS United States sinks off Florida’s Gulf Coast, will become world’s largest artificial reef", url: "https://www.cbsnews.com/news/ss-united-states-sinking-ocean-floor-largest-artificial-reef-world-florida-gulf-coast/" }, { title: "NPR: SS United States sunk to become world’s largest artificial reef", url: "https://www.npr.org/2026/11/11/nx-s1-6030853/ss-united-states-artificial-reef-sinking" }, { title: "Marine Insight: SS United States becomes the world’s largest artificial reef after sinking off Florida", url: "https://www.marineinsight.com/ocean-liner-ss-united-states-sunk-artificial-reef/" }] }
   ]
 };

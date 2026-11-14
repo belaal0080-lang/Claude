@@ -95,38 +95,64 @@ function cleanArticle(input, existing) {
   };
   const cn = str(input.credit?.name, 120); if (cn) a.credit = { name: cn, url: safeUrl(input.credit?.url) };
   const src = (input.sources || []).map(s => ({ title: str(s.title, 200), url: safeUrl(s.url) })).filter(s => s.url); if (src.length) a.sources = src;
-  for (const k of ['interview', 'quote', 'ai', 'imageSearch']) if (existing?.[k] !== undefined) a[k] = existing[k];
+  for (const k of ['interview', 'quote', 'ai', 'imageSearch', 'via', 'reviewed']) if (existing?.[k] !== undefined) a[k] = existing[k];
   if (!a.takeaways.length) delete a.takeaways; if (!a.image) { delete a.image; delete a.alt; delete a.credit; }
   a.updated = new Date().toISOString();
   return a;
 }
-const publicArticle = ({ status, updated, imageSearch, notes, ...a }) => a;
+const publicArticle = ({ status, updated, imageSearch, notes, via, ...a }) => a;
 
 /* ---------- AI news desk ---------- */
 let generating = false;
-async function aiDraft({ section, topic, publish }) {
+async function aiDraft({ section, topic, publish, seed, minSources, via }) {
   if (generating) throw Object.assign(new Error('A draft is already being written. Wait for it to finish.'), { code: 409 });
   generating = true;
   try {
     const { generateArticle } = await import('./ai.js');
     const sec = SITE.sections.find(s => s.id === section) || SITE.sections[0];
     const avoidTitles = store.articles.slice().sort((a, b) => b.date.localeCompare(a.date)).slice(0, 25).map(a => a.title);
-    let g; try { g = await generateArticle({ section: sec, topic: str(topic, 300), avoidTitles }); } catch (e) { console.error('[ai]', e.message); throw Object.assign(new Error(e.message), { code: 502 }); }
+    let g; try { g = await generateArticle({ section: sec, topic: str(topic, 300), seed, minSources, avoidTitles }); } catch (e) { console.error('[ai]', e.message); throw Object.assign(new Error(e.message), { code: 502 }); }
     const a = cleanArticle({ ...g, section: sec.id, author: 'desk', status: publish ? 'published' : 'draft' });
-    a.ai = true; a.imageSearch = g.imageSearch;
+    a.ai = true; a.reviewed = false; a.imageSearch = g.imageSearch; if (via) a.via = via;
     store.articles.push(a); save();
     return a;
   } finally { generating = false; }
 }
+/* Trending run: posts from X (via Apify) are leads; Claude picks stories, confirms each in news sources, then writes. */
+let trending = { running: false, last: store.meta.lastTrending || null };
+async function trendingRun({ count, publish }) {
+  if (trending.running) throw Object.assign(new Error('A trending run is already in progress.'), { code: 409 });
+  trending.running = true;
+  const result = { at: new Date().toISOString(), posts: 0, written: [], skipped: [] };
+  try {
+    const [{ fetchPosts }, { pickTopics }] = await Promise.all([import('./trending.js'), import('./ai.js')]);
+    const posts = await fetchPosts(); result.posts = posts.length;
+    const avoidTitles = store.articles.slice().sort((a, b) => b.date.localeCompare(a.date)).slice(0, 40).map(a => a.title);
+    const topics = await pickTopics({ posts: posts.slice(0, 120), sections: SITE.sections.filter(x => x.id !== 'opinion'), count, avoidTitles });
+    for (const t of topics) {
+      const seed = t.posts.slice(0, 8).map(p => `@${p.author}: ${p.text}`).join('\n');
+      // A story that is published without review must be confirmed by at least two independent outlets.
+      try { const a = await aiDraft({ section: t.section, topic: t.topic, seed, publish, minSources: publish ? 2 : 1, via: 'x' }); result.written.push({ slug: a.slug, title: a.title, status: a.status }); console.log(`[trending] ${a.status}: ${a.title}`); }
+      catch (e) { result.skipped.push({ topic: t.topic, reason: e.message }); console.error(`[trending] skipped "${t.topic}": ${e.message}`); }
+    }
+    return result;
+  } catch (e) { result.error = e.message; console.error('[trending]', e.message); throw Object.assign(new Error(e.message), { code: e.code && typeof e.code === 'number' ? e.code : 502 }); }
+  finally { trending.running = false; trending.last = result; store.meta.lastTrending = result; save(); }
+}
+
 const dailyHour = process.env.AI_DAILY_HOUR === undefined || process.env.AI_DAILY_HOUR === '' ? null : parseInt(process.env.AI_DAILY_HOUR, 10);
+const dailyMode = process.env.AI_DAILY_MODE === 'sections' || !process.env.APIFY_TOKEN ? 'sections' : 'trending';
+const trendingCount = Math.max(1, Math.min(12, parseInt(process.env.TRENDING_COUNT, 10) || 5));
 async function dailyRun() {
   if (dailyHour === null || !process.env.ANTHROPIC_API_KEY) return;
   const now = new Date(), today = now.toLocaleDateString('en-CA');
   if (now.getHours() < dailyHour || store.meta.lastDaily === today) return;
   store.meta.lastDaily = today; save();
+  const publish = process.env.AI_AUTO_PUBLISH === 'true';
+  if (dailyMode === 'trending') { try { await trendingRun({ count: trendingCount, publish }); } catch { /* logged above */ } return; }
   const sections = (process.env.AI_DAILY_SECTIONS || 'startups,funding,technology').split(',').map(s => s.trim()).filter(s => SECTION_IDS.includes(s));
   for (const section of sections) {
-    try { const a = await aiDraft({ section, publish: process.env.AI_AUTO_PUBLISH === 'true' }); console.log(`[daily] ${a.status}: ${a.title}`); }
+    try { const a = await aiDraft({ section, publish }); console.log(`[daily] ${a.status}: ${a.title}`); }
     catch (e) { console.error(`[daily] ${section} failed: ${e.message}`); }
   }
 }
@@ -149,13 +175,13 @@ async function adminApi(req, res, route) {
   if (route === 'bootstrap' && req.method === 'GET') return json(res, 200, {
     sections: SITE.sections, authors: SITE.authors,
     articles: store.articles.slice().sort((a, b) => (b.updated || b.date).localeCompare(a.updated || a.date)),
-    ai: { ready: !!process.env.ANTHROPIC_API_KEY, dailyHour, sections: process.env.AI_DAILY_SECTIONS || 'startups,funding,technology', autoPublish: process.env.AI_AUTO_PUBLISH === 'true', lastDaily: store.meta.lastDaily || null }
+    ai: { ready: !!process.env.ANTHROPIC_API_KEY, x: !!process.env.APIFY_TOKEN, mode: dailyMode, count: trendingCount, trending, dailyHour, sections: process.env.AI_DAILY_SECTIONS || 'startups,funding,technology', autoPublish: process.env.AI_AUTO_PUBLISH === 'true', lastDaily: store.meta.lastDaily || null }
   });
   if (route === 'articles' && req.method === 'POST') { const a = cleanArticle(await readBody(req)); store.articles.push(a); save(); return json(res, 200, a); }
   const m = /^articles\/([a-z0-9-]+)$/.exec(route);
   if (m) {
     const i = store.articles.findIndex(a => a.slug === m[1]); if (i < 0) return json(res, 404, { error: 'That story no longer exists.' });
-    if (req.method === 'PUT') { const input = await readBody(req); store.articles[i] = cleanArticle(input.sources ? input : { ...input, sources: store.articles[i].sources }, store.articles[i]); save(); return json(res, 200, store.articles[i]); }
+    if (req.method === 'PUT') { const input = await readBody(req); if (store.articles[i].ai) store.articles[i].reviewed = true; store.articles[i] = cleanArticle(input.sources ? input : { ...input, sources: store.articles[i].sources }, store.articles[i]); save(); return json(res, 200, store.articles[i]); }
     if (req.method === 'DELETE') { store.articles.splice(i, 1); save(); return json(res, 200, { ok: true }); }
   }
   if (route === 'upload' && req.method === 'POST') {
@@ -166,6 +192,13 @@ async function adminApi(req, res, route) {
     const name = crypto.randomBytes(10).toString('hex') + ext; fs.writeFileSync(path.join(UPLOADS, name), buf);
     return json(res, 200, { path: 'uploads/' + name });
   }
+  if (route === 'trending' && req.method === 'POST') {
+    if (!process.env.APIFY_TOKEN || !process.env.ANTHROPIC_API_KEY) return json(res, 400, { error: 'Set APIFY_TOKEN and ANTHROPIC_API_KEY in .env to use this.' });
+    const b = await readBody(req, 1e4);   // started from the newsroom: always saved as drafts for review
+    trendingRun({ count: Math.max(1, Math.min(8, parseInt(b.count, 10) || 3)), publish: false }).catch(() => {});
+    return json(res, 202, { started: true });
+  }
+  if (route === 'trending' && req.method === 'GET') return json(res, 200, trending);
   if (route === 'generate' && req.method === 'POST') { const b = await readBody(req, 1e4); return json(res, 200, await aiDraft({ section: b.section, topic: b.topic, publish: false })); }
   return json(res, 404, { error: 'Not found.' });
 }
@@ -227,5 +260,6 @@ server.listen(PORT, () => {
   console.log(`Founder Tribune is running on http://localhost:${PORT}`);
   console.log(`Admin panel: http://localhost:${PORT}/${ADMIN_PATH}`);
   if (shownPassword) console.log(`Admin password (shown once, save it now): ${shownPassword}`);
-  console.log(process.env.ANTHROPIC_API_KEY ? `AI drafts: on${dailyHour !== null ? `, daily at ${dailyHour}:00` : ', manual only'}` : 'AI drafts: off (set ANTHROPIC_API_KEY to turn on)');
+  console.log(process.env.ANTHROPIC_API_KEY ? `AI drafts: on${dailyHour !== null ? `, daily at ${dailyHour}:00 (${dailyMode === 'trending' ? `${trendingCount} trending stories from X` : 'one per section'}, ${process.env.AI_AUTO_PUBLISH === 'true' ? 'published automatically' : 'saved for review'})` : ', manual only'}` : 'AI drafts: off (set ANTHROPIC_API_KEY to turn on)');
+  console.log(process.env.APIFY_TOKEN ? 'X trending: on' : 'X trending: off (set APIFY_TOKEN to turn on)');
 });

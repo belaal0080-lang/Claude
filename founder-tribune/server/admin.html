@@ -102,6 +102,13 @@ dl { margin:0; display:grid; grid-template-columns:auto 1fr; gap:6px 14px; font-
             <button class="btn gold" id="gen" type="button">Write a draft</button>
             <small id="g-state"></small>
           </div>
+          <div class="panel">
+            <h2>Trending on X</h2>
+            <p>Collects today's posts from the news accounts you follow, picks the biggest stories, confirms each in news sources and writes drafts for review.</p>
+            <div><label for="t-count">How many stories</label><select id="t-count"><option>1</option><option>2</option><option selected>3</option><option>5</option><option>8</option></select></div>
+            <button class="btn" id="trend" type="button">Write from trending</button>
+            <small id="t-state"></small>
+          </div>
           <div class="panel"><h2>Daily drafts</h2><dl id="daily"></dl><p>Change these in the server's <code>.env</code> file, then restart.</p></div>
         </aside>
       </div>
@@ -171,7 +178,9 @@ dl { margin:0; display:grid; grid-template-columns:auto 1fr; gap:6px 14px; font-
     $('fs').innerHTML = '<option value="">All sections</option>' + opts; $('g-sec').innerHTML = opts; $('f-section').innerHTML = opts;
     $('f-author').innerHTML = Object.entries(S.authors).map(([k, v]) => `<option value="${k}">${esc(v.name)}</option>`).join('');
     const ai = S.ai;
-    $('daily').innerHTML = `<dt>Claude</dt><dd>${ai.ready ? 'Connected' : 'Not connected'}</dd><dt>Schedule</dt><dd>${ai.ready && ai.dailyHour !== null ? 'Every day at ' + String(ai.dailyHour).padStart(2, '0') + ':00' : 'Off'}</dd><dt>Sections</dt><dd>${esc(ai.sections.split(',').map(x => secName(x.trim())).join(', '))}</dd><dt>New drafts</dt><dd>${ai.autoPublish ? 'Published straight away' : 'Saved for review'}</dd><dt>Last run</dt><dd>${esc(ai.lastDaily || 'Never')}</dd>`;
+    $('daily').innerHTML = `<dt>Claude</dt><dd>${ai.ready ? 'Connected' : 'Not connected'}</dd><dt>X (Apify)</dt><dd>${ai.x ? 'Connected' : 'Not connected'}</dd><dt>Daily run writes</dt><dd>${ai.mode === 'trending' ? ai.count + ' trending stories from X' : 'One story per section'}</dd><dt>Schedule</dt><dd>${ai.ready && ai.dailyHour !== null ? 'Every day at ' + String(ai.dailyHour).padStart(2, '0') + ':00' : 'Off'}</dd><dt>Sections</dt><dd>${esc(ai.sections.split(',').map(x => secName(x.trim())).join(', '))}</dd><dt>New drafts</dt><dd>${ai.autoPublish ? 'Published straight away' : 'Saved for review'}</dd><dt>Last run</dt><dd>${esc(ai.lastDaily || 'Never')}</dd>`;
+    $('trend').disabled = !(ai.ready && ai.x) || ai.trending.running; trendState(ai.trending);
+    if (!(ai.ready && ai.x)) $('t-state').textContent = 'Add APIFY_TOKEN and ANTHROPIC_API_KEY to the server’s .env file and restart to turn this on.';
     $('gen').disabled = !ai.ready; $('g-state').textContent = ai.ready ? '' : 'Add ANTHROPIC_API_KEY to the server’s .env file and restart to turn this on.';
   }
   function setImage(p) { image = p || ''; $('thumb').innerHTML = image ? `<img src="/${esc(image)}" alt="">` : 'No photo yet'; $('rm-img').classList.toggle('hide', !image); }
@@ -183,7 +192,8 @@ dl { margin:0; display:grid; grid-template-columns:auto 1fr; gap:6px 14px; font-
     $('f-author').value = a?.author || Object.keys(S.authors)[0]; $('f-featured').checked = !!a?.featured;
     $('f-alt').value = a?.alt || ''; $('f-cn').value = a?.credit?.name || ''; $('f-cu').value = a?.credit?.url || ''; setImage(a?.image);
     $('img-hint').textContent = a?.imageSearch && !a.image ? 'Photo idea: search for “' + a.imageSearch + '”.' : '';
-    $('ai-note').classList.toggle('hide', !(a?.ai && a.status === 'draft'));
+    $('ai-note').classList.toggle('hide', !(a?.ai && !a.reviewed));
+    if (a?.ai && !a.reviewed) $('ai-note').textContent = a.status === 'published' ? 'Claude wrote this story and it was published automatically. Nobody has reviewed it yet. Check every fact, name and number against the sources on the right, then save to mark it reviewed.' : 'Claude drafted this story from the sources listed on the right. Check every fact, name and number against them before you publish.';
     $('src-panel').classList.toggle('hide', !a?.sources?.length); $('src').innerHTML = (a?.sources || []).map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.title)}</a></li>`).join('');
     $('del').classList.toggle('hide', !a); $('view').classList.toggle('hide', !(a && a.status === 'published'));
     show('editor'); $('f-title').focus();
@@ -220,7 +230,16 @@ dl { margin:0; display:grid; grid-template-columns:auto 1fr; gap:6px 14px; font-
     try { const a = await api('generate', 'POST', { section: $('g-sec').value, topic: $('g-topic').value }); S.articles.unshift(a); $('g-topic').value = ''; st.textContent = ''; edit(a); flash('Draft ready. Check it against the sources before publishing.'); }
     catch (x) { st.textContent = ''; flash(x.message, true); } finally { b.disabled = false; b.textContent = 'Write a draft'; } });
 
-  async function boot() { S = await api('bootstrap'); renderMeta(); renderList(); show('list'); }
+  function trendState(t) {
+    if (t.running) return $('t-state').textContent = 'Working. This takes a few minutes per story; you can leave this page.';
+    const l = t.last; if (!l) return $('t-state').textContent = '';
+    $('t-state').textContent = l.error ? 'Last run failed: ' + l.error : `Last run read ${l.posts} posts, wrote ${l.written.length} ${l.written.length === 1 ? 'story' : 'stories'}` + (l.skipped.length ? `, skipped ${l.skipped.length} that could not be confirmed.` : '.');
+  }
+  async function pollTrend() { try { const t = await api('trending'); trendState(t); if (t.running) return setTimeout(pollTrend, 8000); $('trend').disabled = false; S = await api('bootstrap'); renderList(); if (t.last && !t.last.error) flash('Trending run finished. New drafts are at the top of the list.'); } catch (_) {} }
+  $('trend').addEventListener('click', async () => { $('trend').disabled = true;
+    try { await api('trending', 'POST', { count: $('t-count').value }); trendState({ running: true }); setTimeout(pollTrend, 8000); } catch (x) { $('trend').disabled = false; flash(x.message, true); } });
+
+  async function boot() { S = await api('bootstrap'); renderMeta(); renderList(); show('list'); if (S.ai.trending.running) setTimeout(pollTrend, 8000); }
   api('session').then(s => s.authed ? boot() : show('login')).catch(() => show('login'));
 })();
 </script>

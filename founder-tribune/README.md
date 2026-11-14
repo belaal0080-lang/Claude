@@ -30,6 +30,16 @@ without the server the site still works and shows the bundled sample stories.
 - AI stories carry the "Tribune News Desk" byline, list their sources and are labelled as AI-assisted.
 - Each draft uses the Claude API and web search, which are billed to your Anthropic account.
 
+## Trending stories from X (Apify)
+
+- Set `APIFY_TOKEN` in `.env`. The server runs the `apidojo/tweet-scraper` Actor on Apify to collect the day's posts from the news accounts in `X_ACCOUNTS`.
+- Posts are leads only. Claude picks the biggest distinct stories, confirms each one in news sources with web search, then writes it. A story with no verifiable source is skipped.
+- "Write from trending" in the newsroom runs this on demand and always saves drafts.
+- With `AI_DAILY_HOUR` set and `AI_DAILY_MODE=trending`, it runs once a day and writes `TRENDING_COUNT` stories.
+- `AI_AUTO_PUBLISH=true` publishes them without review. In that mode a story is published only if two independent outlets confirm it,
+  and it carries a note saying no editor has reviewed it until someone opens and saves it in the newsroom.
+- Apify's free plan limits this scraper to 10 posts per run. A paid plan lifts that. `APIFY_MAX_USD_PER_RUN` caps the cost of each run.
+
 ## Pages
 Front page, 11 section pages (`section.html?s=news`), story pages (`article.html?s=slug`), writer pages (`author.html?a=id`), search,
 about, contact, pitch your story, advertise, newsletters, editorial standards, corrections, privacy policy, terms and conditions,
